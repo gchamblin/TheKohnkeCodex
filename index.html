@@ -114,8 +114,8 @@
   .header-cruising-mower {
     position: absolute;
     bottom: 2px;
-    left: -190px;
-    animation: cruiseAcrossHeader 18s linear infinite;
+    left: -170px;
+    animation: cruiseAcrossHeader 30s linear infinite;
     filter: drop-shadow(0 4px 12px rgba(0,0,0,0.7));
     overflow: visible !important;
   }
@@ -127,14 +127,46 @@
     cursor: pointer;
   }
 
+  /* Bi-directional full-screen cruising with 180° zero-turn flip at each end */
   @keyframes cruiseAcrossHeader {
     0% {
-      left: -190px;
-      transform: scale(1.22);
+      left: -170px;
+      transform: scale(1.22) rotate(0deg);
+    }
+    46% {
+      left: calc(100% - 25px);
+      transform: scale(1.22) rotate(0deg);
+    }
+    47.5% {
+      /* Spin zero-turn at right end */
+      left: calc(100% - 10px);
+      transform: scale(1.22) rotate(60deg) translateY(-8px);
+    }
+    49% {
+      left: calc(100% - 10px);
+      transform: scale(1.22) rotate(135deg) translateY(-4px);
+    }
+    50% {
+      /* Flipped horizontally and facing left to mow back */
+      left: calc(100% - 25px);
+      transform: scaleX(-1.22) scaleY(1.22) rotate(0deg);
+    }
+    96% {
+      left: -170px;
+      transform: scaleX(-1.22) scaleY(1.22) rotate(0deg);
+    }
+    97.5% {
+      /* Spin zero-turn at left end */
+      left: -180px;
+      transform: scaleX(-1.22) scaleY(1.22) rotate(-60deg) translateY(-8px);
+    }
+    99% {
+      left: -180px;
+      transform: scaleX(-1.22) scaleY(1.22) rotate(-135deg) translateY(-4px);
     }
     100% {
-      left: calc(100% + 190px);
-      transform: scale(1.22);
+      left: -170px;
+      transform: scale(1.22) rotate(0deg);
     }
   }
 
@@ -2160,39 +2192,66 @@
       letters = Array.from(document.querySelectorAll('.tumble-char'));
     });
 
+    let prevMowerLeft = null;
+    let currentDirection = 'right'; // 'right' | 'left'
+    let currentPassId = 1;
+
     function checkCollisionLoop() {
       if (window.innerWidth > 900) {
         const mowerRect = mower.getBoundingClientRect();
         const headerRect = header ? header.getBoundingClientRect() : null;
 
-        // 1. Real-time Grass Cutting & Shortening
+        // Detect direction changes when mower turns around at the ends
+        if (prevMowerLeft !== null) {
+          const deltaX = mowerRect.left - prevMowerLeft;
+          if (deltaX > 0.4 && currentDirection !== 'right') {
+            currentDirection = 'right';
+            currentPassId++;
+          } else if (deltaX < -0.4 && currentDirection !== 'left') {
+            currentDirection = 'left';
+            currentPassId++;
+          }
+        }
+        prevMowerLeft = mowerRect.left;
+
+        // 1. Real-time Grass Cutting & Shortening (Works smoothly in both directions)
         if (headerRect && headerRect.width > 0 && tallGrass && mowedStrip) {
-          // Center of the mower's 42" cutting deck
-          const deckCutX = (mowerRect.left + mowerRect.width * 0.48) - headerRect.left;
+          const deckCutX = (mowerRect.left + mowerRect.width * 0.5) - headerRect.left;
           const cutPercent = Math.max(0, Math.min(100, (deckCutX / headerRect.width) * 100));
 
-          // Tall uncut grass: visible strictly in front of the mower deck (cutPercent to 100%)
-          const tallClip = `polygon(${cutPercent}% 0%, 100% 0%, 100% 100%, ${cutPercent}% 100%)`;
-          tallGrass.style.clipPath = tallClip;
-          tallGrass.style.webkitClipPath = tallClip;
+          if (currentDirection === 'right') {
+            // Moving Left -> Right: tall grass in front (cutPercent to 100%), mowed lawn behind (0 to cutPercent)
+            const tallClip = `polygon(${cutPercent}% 0%, 100% 0%, 100% 100%, ${cutPercent}% 100%)`;
+            tallGrass.style.clipPath = tallClip;
+            tallGrass.style.webkitClipPath = tallClip;
 
-          // Short mowed lawn: visible strictly behind the mower deck (0% to cutPercent)
-          const mowedClip = `polygon(0% 0%, ${cutPercent}% 0%, ${cutPercent}% 100%, 0% 100%)`;
-          mowedStrip.style.clipPath = mowedClip;
-          mowedStrip.style.webkitClipPath = mowedClip;
+            const mowedClip = `polygon(0% 0%, ${cutPercent}% 0%, ${cutPercent}% 100%, 0% 100%)`;
+            mowedStrip.style.clipPath = mowedClip;
+            mowedStrip.style.webkitClipPath = mowedClip;
+          } else {
+            // Moving Right -> Left: tall grass in front (0 to cutPercent), mowed lawn behind (cutPercent to 100%)
+            const tallClip = `polygon(0% 0%, ${cutPercent}% 0%, ${cutPercent}% 100%, 0% 100%)`;
+            tallGrass.style.clipPath = tallClip;
+            tallGrass.style.webkitClipPath = tallClip;
+
+            const mowedClip = `polygon(${cutPercent}% 0%, 100% 0%, 100% 100%, ${cutPercent}% 100%)`;
+            mowedStrip.style.clipPath = mowedClip;
+            mowedStrip.style.webkitClipPath = mowedClip;
+          }
         }
 
         // 2. Letter Tumbling Collision
         if (mowerRect.width > 0 && mowerRect.right > 0 && mowerRect.left < window.innerWidth) {
-          const cutLeft = mowerRect.left + 20;
-          const cutRight = mowerRect.right - 10;
+          const cutLeft = mowerRect.left + 15;
+          const cutRight = mowerRect.right - 15;
 
           for (let i = 0; i < letters.length; i++) {
             const letter = letters[i];
-            if (letter.classList.contains('tumbled')) continue;
+            if (letter.dataset.tumbledPass === String(currentPassId)) continue;
 
             const lRect = letter.getBoundingClientRect();
             if (lRect.width > 0 && lRect.right >= cutLeft && lRect.left <= cutRight) {
+              letter.dataset.tumbledPass = String(currentPassId);
               letter.classList.add('tumbled');
               setTimeout(() => {
                 letter.classList.remove('tumbled');
@@ -2201,14 +2260,20 @@
           }
         }
 
-        // 3. Operator Badge Jumping Out of the Way
+        // 3. Operator Badge Jumping Out of the Way (Both directions)
         if (ownerChip && !ownerChip.classList.contains('jumping')) {
           const oRect = ownerChip.getBoundingClientRect();
-          if (oRect.width > 0 && mowerRect.right >= (oRect.left - 75) && mowerRect.left <= (oRect.right + 25)) {
-            ownerChip.classList.add('jumping');
-            setTimeout(() => {
-              ownerChip.classList.remove('jumping');
-            }, 1150);
+          if (oRect.width > 0) {
+            const isColliding = currentDirection === 'right'
+              ? (mowerRect.right >= (oRect.left - 75) && mowerRect.left <= (oRect.right + 25))
+              : (mowerRect.left <= (oRect.right + 75) && mowerRect.right >= (oRect.left - 25));
+
+            if (isColliding) {
+              ownerChip.classList.add('jumping');
+              setTimeout(() => {
+                ownerChip.classList.remove('jumping');
+              }, 1150);
+            }
           }
         }
       }
