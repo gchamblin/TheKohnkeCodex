@@ -448,6 +448,24 @@
     }
   }
 
+  /* ── Universal Scrollbar Suppression (Hide All Scrollbars) ──────────── */
+  *, html, body, .app-container, aside, main {
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE & Edge */
+  }
+
+  *::-webkit-scrollbar,
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  .app-container::-webkit-scrollbar,
+  aside::-webkit-scrollbar,
+  main::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+
   /* ── Layout & Navigation ──────────────────────────────────────────────── */
   .app-container {
     display: grid;
@@ -456,6 +474,8 @@
     /* Required so the grid children (aside/main) can actually shrink and
        scroll inside this box instead of growing with their content. */
     min-height: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 
   aside {
@@ -465,6 +485,14 @@
     /* Sidebar scrolls independently from the page content, so its scroll
        position never jumps when you switch tabs. */
     overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  aside::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
 
   .nav-menu {
@@ -506,7 +534,16 @@
        tabs can reset just this scrollbar back to the top — see the
        switchTab() function in the <script> block below. */
     overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-behavior: smooth;
     height: 100%;
+  }
+
+  main::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
 
   .tab-content {
@@ -952,6 +989,13 @@
     text-align: center;
     margin-top: 40px;
   }
+
+  .header-skyline {
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 0.7;
+  }
 </style>
 </head>
 <body>
@@ -960,9 +1004,18 @@
   <header>
     <!-- Background Desktop Full-Page Mowing Animation Track -->
     <div class="header-mower-track" aria-hidden="true">
+      <!-- <img src="assets/images/tallahassee-florida-skyline-silhouette-vector-45431687.avif" class="header-skyline" alt="florida skyline silhouette"> -->
       <div class="tall-grass-layer"></div>
       <div class="mowed-strip"></div>
       <svg class="header-cruising-mower" viewBox="0 0 105 52" width="145" height="72" xmlns="http://www.w3.org/2000/svg">
+        <!-- Grass Stream Particles (Shooting out towards the viewer at a sharp angle) -->
+        <g class="grass-particles">
+          <path class="grass-clipping grass-1" d="M 68 36 Q 78 40 88 50" stroke="#32D74B" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <path class="grass-clipping grass-2" d="M 63 35 Q 74 42 82 54" stroke="#28B83D" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path class="grass-clipping grass-3" d="M 70 34 Q 82 40 92 48" stroke="#32D74B" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+          <path class="grass-clipping grass-4" d="M 66 38 Q 78 46 88 56" stroke="#28B83D" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+          <path class="grass-clipping grass-5" d="M 69 36 Q 81 44 95 52" stroke="#75E586" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        </g>
         <!-- Rear Drive Wheel & Tread -->
         <circle cx="20" cy="36" r="12" fill="#0A0B0D" stroke="#222" stroke-width="2"/>
         <circle cx="20" cy="36" r="7" fill="#F5B800"/>
@@ -1010,6 +1063,15 @@
       <button class="nav-toggle-btn" id="navToggleBtn" onclick="toggleMobileNav()" title="Menu - Hover to Mow the Menu, Click to Open Navigation" aria-label="Toggle Navigation">
         <!-- Cub Cadet Zero-Turn Mower SVG -->
         <svg class="zero-turn-mower-btn" viewBox="0 0 105 52" width="88" height="48" xmlns="http://www.w3.org/2000/svg">
+          <!-- Continuous Grass Stream Particles (Shooting out towards the viewer at sharp angle) -->
+          <g class="grass-particles">
+            <path class="grass-clipping grass-1" d="M 68 36 Q 78 40 88 50" stroke="#32D74B" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+            <path class="grass-clipping grass-2" d="M 63 35 Q 74 42 82 54" stroke="#28B83D" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <path class="grass-clipping grass-3" d="M 70 34 Q 82 40 92 48" stroke="#32D74B" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+            <path class="grass-clipping grass-4" d="M 66 38 Q 78 46 88 56" stroke="#28B83D" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path class="grass-clipping grass-5" d="M 69 36 Q 81 44 95 52" stroke="#75E586" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          </g>
+
           <!-- Rear Drive Wheel & Tread -->
           <circle cx="20" cy="36" r="12" fill="#0A0B0D" stroke="#222" stroke-width="2"/>
           <circle cx="20" cy="36" r="7" fill="#F5B800"/>
