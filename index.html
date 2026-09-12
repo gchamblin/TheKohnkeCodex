@@ -55,17 +55,310 @@
     border-bottom: 1px solid var(--border-color);
     padding: 16px 32px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     position: sticky;
     top: 0;
     z-index: 100;
+    overflow: hidden;
+    min-height: 84px;
   }
+
+  /* ── Desktop Full-Page Mowing Strip across Header ───────────────────── */
+  .header-mower-track {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 8;
+  }
+
+  /* 1. Tall, Overgrown Grass Blades (Ahead of the mower) */
+  .tall-grass-layer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 22px;
+    background-color: transparent;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='22' viewBox='0 0 36 22'%3E%3Cpath d='M0 22 L2 5 L4 22 L7 2 L10 22 L13 7 L16 22 L18 3 L21 22 L24 8 L27 22 L30 1 L33 22 L35 6 L36 22 Z' fill='%23194f19'/%3E%3Cpath d='M1 22 L3 9 L6 22 L9 4 L12 22 L15 10 L17 22 L20 6 L23 22 L26 9 L29 22 L32 3 L34 22 Z' fill='%23277727' opacity='0.9'/%3E%3Cpath d='M0 22 L2 12 L5 22 L8 8 L11 22 L14 13 L17 22 L19 7 L22 22 L25 11 L28 22 L31 6 L34 22 Z' fill='%2336a336' opacity='0.8'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-position: bottom left;
+    background-size: 36px 22px;
+    filter: drop-shadow(0 -1px 3px rgba(0,0,0,0.4));
+    z-index: 2;
+  }
+
+  /* 2. Freshly Cut, Short Striped Lawn (Revealed behind the mower) */
+  .mowed-strip {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: repeating-linear-gradient(
+      90deg,
+      #1b5e20 0px,
+      #1b5e20 28px,
+      #2e7d32 28px,
+      #2e7d32 56px
+    );
+    border-top: 1.5px solid #4caf50;
+    box-shadow: 0 -2px 8px rgba(76, 175, 80, 0.5);
+    z-index: 1;
+  }
+
+  .header-cruising-mower {
+    position: absolute;
+    bottom: 2px;
+    left: -190px;
+    animation: cruiseAcrossHeader 18s linear infinite;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.7));
+    overflow: visible !important;
+  }
+
+  .header-cruising-mower:hover {
+    animation-play-state: paused;
+    filter: drop-shadow(0 0 14px var(--brand-yellow));
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  @keyframes cruiseAcrossHeader {
+    0% {
+      left: -190px;
+      transform: scale(1.22);
+    }
+    100% {
+      left: calc(100% + 190px);
+      transform: scale(1.22);
+    }
+  }
+
+  .header-cruising-mower .lap-bars {
+    transform-origin: 36px 28px;
+    transform: rotate(24deg);
+  }
+
+  .header-cruising-mower .grass-clipping {
+    animation: continuousGrassShoot 0.32s ease-out infinite;
+  }
+  .header-cruising-mower .grass-1 { animation-delay: 0s; }
+  .header-cruising-mower .grass-2 { animation-delay: 0.05s; }
+  .header-cruising-mower .grass-3 { animation-delay: 0.10s; }
+  .header-cruising-mower .grass-4 { animation-delay: 0.15s; }
+  .header-cruising-mower .grass-5 { animation-delay: 0.20s; }
+  .header-cruising-mower .grass-6 { animation-delay: 0.25s; }
+  .header-cruising-mower .grass-7 { animation-delay: 0.30s; }
+
+  /* ── Letter Tumble & Reassemble Animation when Mower Runs Over ──────── */
+  .tumble-char {
+    display: inline-block;
+    position: relative;
+    transform-origin: bottom center;
+    transition: transform 0.08s ease, color 0.15s ease;
+    will-change: transform, opacity;
+  }
+
+  .tumble-space {
+    display: inline-block;
+    width: 0.3em;
+  }
+
+  .tumble-char.tumbled {
+    animation: letterTumbleReassemble 1.15s cubic-bezier(0.22, 1.28, 0.36, 1) forwards;
+    z-index: 15;
+  }
+
+  @keyframes letterTumbleReassemble {
+    0% {
+      transform: translateY(0) rotate(0deg) scale(1);
+    }
+    16% {
+      /* Mower blade knocks letter off the line */
+      transform: translateY(20px) translateX(6px) rotate(42deg) scale(0.92);
+      color: #32D74B;
+      text-shadow: 0 0 10px rgba(50, 215, 75, 0.9);
+    }
+    36% {
+      /* Tumbles deeper down with spinning scatter */
+      transform: translateY(28px) translateX(12px) rotate(75deg) scale(0.85);
+      color: var(--brand-yellow);
+      text-shadow: 0 0 12px rgba(245, 184, 0, 0.85);
+      opacity: 0.9;
+    }
+    62% {
+      /* Bounces back upward past the line */
+      transform: translateY(-8px) translateX(-3px) rotate(-12deg) scale(1.1);
+      color: #FFF;
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+      opacity: 1;
+    }
+    82% {
+      /* Settles into place */
+      transform: translateY(2px) translateX(1px) rotate(3deg) scale(0.98);
+      color: inherit;
+      text-shadow: none;
+    }
+    100% {
+      /* Perfectly reassembled on the line */
+      transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+      color: inherit;
+      text-shadow: none;
+    }
+  }
+
+  /* ── Mobile/Small Screen Mower Button ───────────────────────────── */
+  .nav-toggle-btn {
+    display: none;
+    align-items: center;
+    background: var(--bg-dark);
+    border: 2px solid var(--brand-yellow);
+    border-radius: 12px;
+    padding: 6px 14px 6px 8px;
+    cursor: pointer;
+    position: relative;
+    overflow: visible;
+    gap: 10px;
+    box-shadow: 0 0 10px rgba(245, 184, 0, 0.25);
+    transition: all 0.3s ease;
+  }
+
+  .nav-toggle-btn:hover {
+    box-shadow: 0 0 18px rgba(245, 184, 0, 0.6);
+    border-color: #FFF;
+  }
+
+  /* Mower SVG initial position on left side */
+  .zero-turn-mower-btn {
+    position: relative;
+    z-index: 3;
+    transform-origin: 45px 30px;
+    transition: transform 0.5s cubic-bezier(0.34, 1.3, 0.64, 1);
+    overflow: visible !important;
+  }
+
+  /* The Cub Cadet-styled "MENU" Badge placed in front of the mower */
+  .mower-menu-badge {
+    background: var(--brand-yellow);
+    color: #000;
+    font-weight: 900;
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    border-radius: 4px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, filter 0.3s ease;
+  }
+
+  /* Lap bars push forward into drive position when hovering */
+  .nav-toggle-btn .lap-bars {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: 36px 28px;
+  }
+
+  .nav-toggle-btn:hover .lap-bars,
+  .nav-toggle-btn:active .lap-bars {
+    transform: rotate(28deg);
+  }
+
+  /* HOVER: Mower nudges forward toward the MENU badge */
+  .nav-toggle-btn:hover .zero-turn-mower-btn {
+    transform: translateX(18px);
+  }
+
+  /* CLICK / SPINNING DONUT: The Zero-Turn runs forward, spins a 360° donut circle over the MENU, and blasts grass! */
+  .nav-toggle-btn.spinning-donut .zero-turn-mower-btn {
+    animation: mowerDonutRun 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  @keyframes mowerDonutRun {
+    0% {
+      transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+    30% {
+      transform: translate(55px, -6px) rotate(45deg) scale(1.12);
+    }
+    55% {
+      transform: translate(80px, 8px) rotate(190deg) scale(1.15);
+    }
+    80% {
+      transform: translate(25px, 12px) rotate(320deg) scale(1.05);
+    }
+    100% {
+      transform: translate(0, 0) rotate(360deg) scale(1);
+    }
+  }
+
+  .nav-toggle-btn.spinning-donut .mower-menu-badge {
+    animation: menuMowedEffect 0.65s ease forwards;
+  }
+
+  @keyframes menuMowedEffect {
+    0% { transform: scale(1); opacity: 1; }
+    35% { transform: scaleY(0.2) scaleX(1.1) translateY(12px); opacity: 0.3; filter: blur(1px); }
+    75% { transform: scale(1.08); opacity: 0.9; filter: drop-shadow(0 0 10px #32D74B); }
+    100% { transform: scale(1); opacity: 1; filter: none; }
+  }
+
+  /* ── Continuous Grass Discharge Animation (Shooting out vigorously from the chute) ── */
+  @keyframes continuousGrassShoot {
+    0% {
+      opacity: 0;
+      transform: translate(0, 0) scale(0.6) rotate(0deg);
+    }
+    20% {
+      opacity: 1;
+    }
+    60% {
+      opacity: 0.95;
+      transform: translate(38px, 28px) scale(1.8) rotate(55deg);
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.7));
+    }
+    100% {
+      opacity: 0;
+      transform: translate(68px, 50px) scale(2.8) rotate(90deg);
+      filter: drop-shadow(0 10px 16px rgba(50, 215, 75, 0.8));
+    }
+  }
+
+  .grass-clipping {
+    opacity: 0;
+    transform-origin: 66px 36px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  }
+
+  /* When hovering, holding, or running the donut circle, grass streams continuously towards the user! */
+  .nav-toggle-btn:hover .grass-clipping,
+  .nav-toggle-btn:active .grass-clipping,
+  .nav-toggle-btn.mowing .grass-clipping,
+  .nav-toggle-btn.spinning-donut .grass-clipping {
+    animation: continuousGrassShoot 0.30s ease-out infinite;
+  }
+
+  .nav-toggle-btn:hover .grass-1, .nav-toggle-btn.spinning-donut .grass-1 { animation-delay: 0s; }
+  .nav-toggle-btn:hover .grass-2, .nav-toggle-btn.spinning-donut .grass-2 { animation-delay: 0.05s; }
+  .nav-toggle-btn:hover .grass-3, .nav-toggle-btn.spinning-donut .grass-3 { animation-delay: 0.10s; }
+  .nav-toggle-btn:hover .grass-4, .nav-toggle-btn.spinning-donut .grass-4 { animation-delay: 0.15s; }
+  .nav-toggle-btn:hover .grass-5, .nav-toggle-btn.spinning-donut .grass-5 { animation-delay: 0.20s; }
+  .nav-toggle-btn:hover .grass-6, .nav-toggle-btn.spinning-donut .grass-6 { animation-delay: 0.25s; }
+  .nav-toggle-btn:hover .grass-7, .nav-toggle-btn.spinning-donut .grass-7 { animation-delay: 0.30s; }
 
   .brand-group {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 16px;
+    justify-content: center;
+    text-align: center;
+    margin: 0 auto;
+    position: relative;
+    z-index: 5;
   }
 
   .brand-badge {
@@ -80,14 +373,25 @@
   }
 
   .brand-title {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 800;
     letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
   }
 
   .brand-subtitle {
     color: var(--text-secondary);
     font-size: 0.85rem;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
   }
 
   .owner-chip {
@@ -97,11 +401,51 @@
     border-radius: 20px;
     font-size: 0.85rem;
     color: var(--text-secondary);
+    position: absolute;
+    right: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform;
   }
 
   .owner-chip span {
     color: var(--brand-yellow);
     font-weight: 600;
+  }
+
+  .owner-chip.jumping {
+    animation: ownerBadgeJump 1.15s cubic-bezier(0.18, 1.25, 0.3, 1) forwards;
+    border-color: var(--brand-yellow);
+    box-shadow: 0 0 20px rgba(245, 184, 0, 0.85), 0 8px 24px rgba(0, 0, 0, 0.6);
+    background: rgba(245, 184, 0, 0.22);
+    color: #FFF;
+  }
+
+  @keyframes ownerBadgeJump {
+    0% {
+      transform: translateY(-50%) scale(1) rotate(0deg);
+    }
+    22% {
+      /* Leap up and tilt startled away from incoming mower */
+      transform: translateY(-88px) scale(1.18) rotate(-16deg);
+    }
+    48% {
+      /* Hang at peak */
+      transform: translateY(-78px) scale(1.1) rotate(6deg);
+    }
+    75% {
+      /* Come down and bounce */
+      transform: translateY(-42px) scale(0.96) rotate(-2deg);
+    }
+    90% {
+      transform: translateY(-53px) scale(1.02) rotate(1deg);
+    }
+    100% {
+      /* Settle back onto the line */
+      transform: translateY(-50%) scale(1) rotate(0deg);
+    }
   }
 
   /* ── Layout & Navigation ──────────────────────────────────────────────── */
@@ -179,10 +523,112 @@
   .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 
   @media (max-width: 900px) {
-    .app-container { grid-template-columns: 1fr; }
-    aside { display: none; }
+    header {
+      padding: 12px 16px;
+      justify-content: space-between;
+      min-height: auto;
+    }
+    .header-mower-track { display: none !important; }
+    .nav-toggle-btn { display: inline-flex; }
+    .owner-chip { display: none; }
+    .brand-group {
+      flex-direction: row;
+      align-items: center;
+      text-align: left;
+      margin: 0;
+      gap: 12px;
+    }
+    .brand-title {
+      font-size: 1.1rem;
+      justify-content: flex-start;
+    }
+    .brand-subtitle {
+      font-size: 0.75rem;
+      justify-content: flex-start;
+    }
+    .app-container { grid-template-columns: 1fr; position: relative; }
+    aside {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: min(320px, 100%);
+      max-height: calc(100vh - 75px);
+      z-index: 90;
+      background: rgba(26, 28, 35, 0.98);
+      backdrop-filter: blur(12px);
+      border-right: 2px solid var(--border-color);
+      border-bottom: 3px solid var(--brand-yellow);
+      border-radius: 0 0 16px 0;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.85), 0 0 20px rgba(245, 184, 0, 0.25);
+      transform-origin: top left;
+    }
+    aside.mobile-open {
+      display: block;
+      animation: spewDownNav 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
     .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   }
+
+  /* ── Spew-Down Chute Grass Discharge Animation ────────────────────────── */
+  @keyframes spewDownNav {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.92);
+      clip-path: circle(10% at 70px 0%);
+    }
+    50% {
+      opacity: 1;
+      clip-path: circle(70% at 70px 20%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      clip-path: circle(150% at 70px 20%);
+    }
+  }
+
+  @keyframes grassChuteAssemble {
+    0% {
+      opacity: 0;
+      transform: translate(45px, -75px) scale(0.25) rotate(28deg);
+      background: rgba(50, 215, 75, 0.4);
+      border-color: #32D74B;
+      color: #32D74B;
+      filter: blur(2px) drop-shadow(0 0 18px rgba(50, 215, 75, 0.9));
+    }
+    45% {
+      opacity: 1;
+      transform: translate(18px, -12px) scale(1.06) rotate(-5deg);
+      background: rgba(50, 215, 75, 0.2);
+      border-color: var(--brand-yellow);
+      filter: blur(0) drop-shadow(0 0 10px rgba(245, 184, 0, 0.6));
+    }
+    75% {
+      transform: translate(-3px, 4px) scale(0.98) rotate(1.5deg);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(0, 0) scale(1) rotate(0deg);
+      filter: none;
+    }
+  }
+
+  aside.mobile-open .nav-item {
+    animation: grassChuteAssemble 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  aside.mobile-open .nav-item:nth-child(1)  { animation-delay: 0.04s; }
+  aside.mobile-open .nav-item:nth-child(2)  { animation-delay: 0.08s; }
+  aside.mobile-open .nav-item:nth-child(3)  { animation-delay: 0.12s; }
+  aside.mobile-open .nav-item:nth-child(4)  { animation-delay: 0.16s; }
+  aside.mobile-open .nav-item:nth-child(5)  { animation-delay: 0.20s; }
+  aside.mobile-open .nav-item:nth-child(6)  { animation-delay: 0.24s; }
+  aside.mobile-open .nav-item:nth-child(7)  { animation-delay: 0.28s; }
+  aside.mobile-open .nav-item:nth-child(8)  { animation-delay: 0.32s; }
+  aside.mobile-open .nav-item:nth-child(9)  { animation-delay: 0.36s; }
+  aside.mobile-open .nav-item:nth-child(10) { animation-delay: 0.40s; }
+  aside.mobile-open .nav-item:nth-child(11) { animation-delay: 0.44s; }
+  aside.mobile-open .nav-item:nth-child(12) { animation-delay: 0.48s; }
 
   .card {
     background: var(--bg-card);
@@ -512,11 +958,118 @@
 
   <!-- Header -->
   <header>
+    <!-- Background Desktop Full-Page Mowing Animation Track -->
+    <div class="header-mower-track" aria-hidden="true">
+      <div class="tall-grass-layer"></div>
+      <div class="mowed-strip"></div>
+      <svg class="header-cruising-mower" viewBox="0 0 105 52" width="145" height="72" xmlns="http://www.w3.org/2000/svg">
+        <!-- Rear Drive Wheel & Tread -->
+        <circle cx="20" cy="36" r="12" fill="#0A0B0D" stroke="#222" stroke-width="2"/>
+        <circle cx="20" cy="36" r="7" fill="#F5B800"/>
+        <circle cx="20" cy="36" r="3" fill="#000"/>
+        <!-- Front Caster Wheel Assembly -->
+        <circle cx="66" cy="39" r="6.5" fill="#0A0B0D" stroke="#555" stroke-width="1.5"/>
+        <path d="M66 33 L66 26 L59 26" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- 42" S-Span Mower Deck -->
+        <path class="mower-deck" d="M 14 38 L 68 38 L 62 31 L 16 31 Z" fill="#22252E" stroke="#F5B800" stroke-width="2"/>
+        <!-- Side Discharge Chute Shield -->
+        <path d="M 58 33 L 70 34 L 68 39 L 56 38 Z" fill="#121316" stroke="#F5B800" stroke-width="1.5"/>
+        <!-- Cub Cadet Yellow Main Chassis Body -->
+        <path d="M 16 30 L 42 30 L 53 20 L 62 20 L 62 29 L 16 30 Z" fill="#F5B800" stroke="#D49F00" stroke-width="1"/>
+        <!-- Kohler Engine Block & Air Filter Cover -->
+        <rect x="20" y="19" width="14" height="10" rx="2" fill="#121316" stroke="#444" stroke-width="1"/>
+        <!-- Operator Seat -->
+        <g class="operator-seat">
+          <path d="M 24 29 L 38 29 C 38 29 38 26 36 26 L 24 26 Z" fill="#2A2D38" stroke="#F5B800" stroke-width="1"/>
+          <path d="M 23 27 L 23 10 C 23 7 30 7 30 10 L 29 27 Z" fill="#121316" stroke="#F5B800" stroke-width="1.8"/>
+          <path d="M 26 12 L 26 24" stroke="#F5B800" stroke-width="0.8" opacity="0.6"/>
+          <path d="M 28 21 L 35 21 L 35 24" stroke="#F5B800" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        </g>
+        <!-- Steering Lap Bars -->
+        <g class="lap-bars">
+          <path d="M 36 28 L 36 12 L 43 12" stroke="#F5B800" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 33 28 L 33 15 L 39 15" stroke="#D49F00" stroke-width="2.5" stroke-linecap="round"/>
+          <rect x="41" y="10" width="5" height="4" rx="1" fill="#000"/>
+          <rect x="37" y="13" width="4" height="3" rx="1" fill="#000"/>
+        </g>
+        <!-- High-Velocity Grass Chute Discharge Stream (Rendered in front of chute opening) -->
+        <g class="grass-particles">
+          <path class="grass-clipping grass-1" d="M 68 36 Q 80 40 94 52" stroke="#32D74B" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <path class="grass-clipping grass-2" d="M 64 35 Q 78 44 90 58" stroke="#28B83D" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path class="grass-clipping grass-3" d="M 70 34 Q 85 39 100 48" stroke="#75E586" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+          <path class="grass-clipping grass-4" d="M 66 38 Q 80 48 95 62" stroke="#209b30" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+          <path class="grass-clipping grass-5" d="M 69 36 Q 84 45 102 54" stroke="#98F5A6" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <path class="grass-clipping grass-6" d="M 67 37 Q 82 50 96 66" stroke="#E4FF38" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+          <path class="grass-clipping grass-7" d="M 65 35 Q 76 40 88 48" stroke="#32D74B" stroke-width="3.6" stroke-linecap="round" fill="none"/>
+        </g>
+      </svg>
+    </div>
+
     <div class="brand-group">
-      <span class="brand-badge">CUB CADET</span>
+      <!-- Zero-Turn Mower & Menu Button -->
+      <button class="nav-toggle-btn" id="navToggleBtn" onclick="toggleMobileNav()" title="Menu - Hover to Mow the Menu, Click to Open Navigation" aria-label="Toggle Navigation">
+        <!-- Cub Cadet Zero-Turn Mower SVG -->
+        <svg class="zero-turn-mower-btn" viewBox="0 0 105 52" width="88" height="48" xmlns="http://www.w3.org/2000/svg">
+          <!-- Rear Drive Wheel & Tread -->
+          <circle cx="20" cy="36" r="12" fill="#0A0B0D" stroke="#222" stroke-width="2"/>
+          <circle cx="20" cy="36" r="7" fill="#F5B800"/>
+          <circle cx="20" cy="36" r="3" fill="#000"/>
+
+          <!-- Front Caster Wheel Assembly -->
+          <circle cx="66" cy="39" r="6.5" fill="#0A0B0D" stroke="#555" stroke-width="1.5"/>
+          <path d="M66 33 L66 26 L59 26" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- 42" S-Span Mower Deck -->
+          <path class="mower-deck" d="M 14 38 L 68 38 L 62 31 L 16 31 Z" fill="#22252E" stroke="#F5B800" stroke-width="2"/>
+
+          <!-- Side Discharge Chute Shield (Angled out on right side of deck) -->
+          <path d="M 58 33 L 70 34 L 68 39 L 56 38 Z" fill="#121316" stroke="#F5B800" stroke-width="1.5"/>
+
+          <!-- Cub Cadet Yellow Main Chassis Body -->
+          <path d="M 16 30 L 42 30 L 53 20 L 62 20 L 62 29 L 16 30 Z" fill="#F5B800" stroke="#D49F00" stroke-width="1"/>
+
+          <!-- Kohler Engine Block & Air Filter Cover -->
+          <rect x="20" y="19" width="14" height="10" rx="2" fill="#121316" stroke="#444" stroke-width="1"/>
+
+          <!-- Prominent High-Back Operator Seat with Armrests & Cushion -->
+          <g class="operator-seat">
+            <!-- Seat Base Cushion -->
+            <path d="M 24 29 L 38 29 C 38 29 38 26 36 26 L 24 26 Z" fill="#2A2D38" stroke="#F5B800" stroke-width="1"/>
+            <!-- Ergonomic High Backrest -->
+            <path d="M 23 27 L 23 10 C 23 7 30 7 30 10 L 29 27 Z" fill="#121316" stroke="#F5B800" stroke-width="1.8"/>
+            <!-- Contour Cushion Lines -->
+            <path d="M 26 12 L 26 24" stroke="#F5B800" stroke-width="0.8" opacity="0.6"/>
+            <!-- Seat Armrest -->
+            <path d="M 28 21 L 35 21 L 35 24" stroke="#F5B800" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          </g>
+
+          <!-- Steering Lap Bars (Push forward distinctly on hover/touch) -->
+          <g class="lap-bars">
+            <path d="M 36 28 L 36 12 L 43 12" stroke="#F5B800" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M 33 28 L 33 15 L 39 15" stroke="#D49F00" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Rubber Hand Grips -->
+            <rect x="41" y="10" width="5" height="4" rx="1" fill="#000"/>
+            <rect x="37" y="13" width="4" height="3" rx="1" fill="#000"/>
+          </g>
+
+          <!-- High-Velocity Continuous Grass Stream Particles (Rendered in front of chute opening) -->
+          <g class="grass-particles">
+            <path class="grass-clipping grass-1" d="M 68 36 Q 80 40 94 52" stroke="#32D74B" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+            <path class="grass-clipping grass-2" d="M 64 35 Q 78 44 90 58" stroke="#28B83D" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <path class="grass-clipping grass-3" d="M 70 34 Q 85 39 100 48" stroke="#75E586" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+            <path class="grass-clipping grass-4" d="M 66 38 Q 80 48 95 62" stroke="#209b30" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path class="grass-clipping grass-5" d="M 69 36 Q 84 45 102 54" stroke="#98F5A6" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+            <path class="grass-clipping grass-6" d="M 67 37 Q 82 50 96 66" stroke="#E4FF38" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+            <path class="grass-clipping grass-7" d="M 65 35 Q 76 40 88 48" stroke="#32D74B" stroke-width="3.6" stroke-linecap="round" fill="none"/>
+          </g>
+        </svg>
+
+        <!-- "MENU" Badge placed directly in front of the mower -->
+        <span class="mower-menu-badge">MENU</span>
+      </button>
       <div>
-        <div class="brand-title">Zero-Turn Incident Command Hub</div>
-        <div class="brand-subtitle">Model 17BIEAEE010 · 42" S-Span Deck · 21.5 HP Kohler Engine</div>
+        <div class="brand-title" id="brandTitle">Zero-Turn Incident Command Hub</div>
+        <div class="brand-subtitle" id="brandSubtitle">Model 17BIEAEE010 · 42" S-Span Deck · 21.5 HP Kohler Engine</div>
       </div>
     </div>
     <div class="owner-chip">
@@ -1416,6 +1969,26 @@
   <button id="backToTopBtn" onclick="document.querySelector('main').scrollTo({top: 0, behavior: 'smooth'})" title="Back to top" aria-label="Back to top">↑</button>
 
 <script>
+  // Mobile Navigation Toggle with Zero-Turn Donut Spin & Grass Blast
+  function toggleMobileNav() {
+    const sidebar = document.querySelector('aside');
+    const btn = document.getElementById('navToggleBtn');
+    const isOpening = !sidebar.classList.contains('mobile-open');
+    
+    sidebar.classList.toggle('mobile-open');
+
+    if (btn) {
+      btn.classList.remove('spinning-donut');
+      // Trigger reflow to restart animation reliably on repeated clicks
+      void btn.offsetWidth;
+      btn.classList.add('spinning-donut');
+      
+      setTimeout(() => {
+        btn.classList.remove('spinning-donut');
+      }, 750);
+    }
+  }
+
   // Dynamic Tab Router
   function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -1423,6 +1996,9 @@
     
     document.getElementById(tabId).classList.add('active');
     event.currentTarget.classList.add('active');
+
+    // Close mobile nav after selecting a tab on small screens
+    document.querySelector('aside').classList.remove('mobile-open');
 
     // The content area (<main>) scrolls independently from the sidebar.
     // Every time you click a new tab, snap its scroll position back to
@@ -1470,6 +2046,122 @@
       btn.classList.remove('show');
     }
   });
+
+  // Automatically reset/close mobile dropdown menu when resizing back to desktop full screen
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 900) {
+      const sidebar = document.querySelector('aside');
+      if (sidebar) {
+        sidebar.classList.remove('mobile-open');
+      }
+    }
+  });
+
+  // Header Cruising Mower Collision & Real-time Lawn Cutting Effect
+  function initHeaderMowerCollision() {
+    const mower = document.querySelector('.header-cruising-mower');
+    const header = document.querySelector('header');
+    const tallGrass = document.querySelector('.tall-grass-layer');
+    const mowedStrip = document.querySelector('.mowed-strip');
+    const titleEl = document.getElementById('brandTitle');
+    const subtitleEl = document.getElementById('brandSubtitle');
+    const ownerChip = document.querySelector('.owner-chip');
+    
+    if (!mower || !titleEl) return;
+
+    function splitToChars(el) {
+      if (!el || el.dataset.splitDone) return;
+      el.dataset.splitDone = "true";
+      const text = el.innerText.trim();
+      el.innerHTML = '';
+      for (let i = 0; i < text.length; i++) {
+        if (text[i] === ' ') {
+          const space = document.createElement('span');
+          space.className = 'tumble-space';
+          space.innerHTML = '&nbsp;';
+          el.appendChild(space);
+        } else {
+          const span = document.createElement('span');
+          span.textContent = text[i];
+          span.className = 'tumble-char';
+          el.appendChild(span);
+        }
+      }
+    }
+
+    splitToChars(titleEl);
+    if (subtitleEl) splitToChars(subtitleEl);
+
+    let letters = Array.from(document.querySelectorAll('.tumble-char'));
+
+    window.addEventListener('resize', () => {
+      letters = Array.from(document.querySelectorAll('.tumble-char'));
+    });
+
+    function checkCollisionLoop() {
+      if (window.innerWidth > 900) {
+        const mowerRect = mower.getBoundingClientRect();
+        const headerRect = header ? header.getBoundingClientRect() : null;
+
+        // 1. Real-time Grass Cutting & Shortening
+        if (headerRect && headerRect.width > 0 && tallGrass && mowedStrip) {
+          // Center of the mower's 42" cutting deck
+          const deckCutX = (mowerRect.left + mowerRect.width * 0.48) - headerRect.left;
+          const cutPercent = Math.max(0, Math.min(100, (deckCutX / headerRect.width) * 100));
+
+          // Tall uncut grass: visible strictly in front of the mower deck (cutPercent to 100%)
+          const tallClip = `polygon(${cutPercent}% 0%, 100% 0%, 100% 100%, ${cutPercent}% 100%)`;
+          tallGrass.style.clipPath = tallClip;
+          tallGrass.style.webkitClipPath = tallClip;
+
+          // Short mowed lawn: visible strictly behind the mower deck (0% to cutPercent)
+          const mowedClip = `polygon(0% 0%, ${cutPercent}% 0%, ${cutPercent}% 100%, 0% 100%)`;
+          mowedStrip.style.clipPath = mowedClip;
+          mowedStrip.style.webkitClipPath = mowedClip;
+        }
+
+        // 2. Letter Tumbling Collision
+        if (mowerRect.width > 0 && mowerRect.right > 0 && mowerRect.left < window.innerWidth) {
+          const cutLeft = mowerRect.left + 20;
+          const cutRight = mowerRect.right - 10;
+
+          for (let i = 0; i < letters.length; i++) {
+            const letter = letters[i];
+            if (letter.classList.contains('tumbled')) continue;
+
+            const lRect = letter.getBoundingClientRect();
+            if (lRect.width > 0 && lRect.right >= cutLeft && lRect.left <= cutRight) {
+              letter.classList.add('tumbled');
+              setTimeout(() => {
+                letter.classList.remove('tumbled');
+              }, 1200);
+            }
+          }
+        }
+
+        // 3. Operator Badge Jumping Out of the Way
+        if (ownerChip && !ownerChip.classList.contains('jumping')) {
+          const oRect = ownerChip.getBoundingClientRect();
+          if (oRect.width > 0 && mowerRect.right >= (oRect.left - 75) && mowerRect.left <= (oRect.right + 25)) {
+            ownerChip.classList.add('jumping');
+            setTimeout(() => {
+              ownerChip.classList.remove('jumping');
+            }, 1150);
+          }
+        }
+      }
+      requestAnimationFrame(checkCollisionLoop);
+    }
+
+    requestAnimationFrame(checkCollisionLoop);
+  }
+
+  // Run collision monitor on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHeaderMowerCollision);
+  } else {
+    initHeaderMowerCollision();
+  }
 </script>
 
 </body>
