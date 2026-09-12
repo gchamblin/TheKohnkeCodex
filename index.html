@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cub Cadet Zero-Turn Command Hub | Kohnke Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ── Modern Industrial Dark Theme System ────────────────────────────────── */
+  :root {
+    --bg-dark:          #121316;
+    --bg-card:          #1A1C23;
+    --bg-card-hover:    #22252E;
+    --border-color:     #2D313E;
+    
+    --brand-yellow:     #F5B800;
+    --brand-yellow-dim: rgba(245, 184, 0, 0.15);
+    --brand-red:        #FF453A;
+    --brand-red-dim:    rgba(255, 69, 58, 0.15);
+    --brand-green:      #32D74B;
+    --brand-green-dim:  rgba(50, 215, 75, 0.15);
+    
+    --text-primary:     #F2F4F8;
+    --text-secondary:   #9D9FA9;
+    --text-muted:       #626575;
+    
+    --font-sans:        'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono:        'JetBrains Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    /* The header stays put
+       and the sidebar/content area below it (.app-container) becomes its
+       own fixed-height box so each side can scroll on its own. */
+    overflow: hidden;
+  }
+
+  /* ── Header & App Bar ────────────────────────────────────────────────── */
+  header {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .brand-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .brand-badge {
+    background: var(--brand-yellow);
+    color: #000;
+    font-weight: 900;
+    font-size: 0.85rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .brand-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .brand-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+  }
+
+  .owner-chip {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .owner-chip span {
+    color: var(--brand-yellow);
+    font-weight: 600;
+  }
+
+  /* ── Layout & Navigation ──────────────────────────────────────────────── */
+  .app-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    flex: 1;
+    /* Required so the grid children (aside/main) can actually shrink and
+       scroll inside this box instead of growing with their content. */
+    min-height: 0;
+  }
+
+  aside {
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-color);
+    padding: 24px 16px;
+    /* Sidebar scrolls independently from the page content, so its scroll
+       position never jumps when you switch tabs. */
+    overflow-y: auto;
+  }
+
+  .nav-menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .nav-item:hover {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+  }
+
+  .nav-item.active {
+    background: var(--brand-yellow-dim);
+    color: var(--brand-yellow);
+    border-left: 3px solid var(--brand-yellow);
+  }
+
+  main {
+    padding: 32px;
+    max-width: 1200px;
+    /* This is the box that actually scrolls when reading a tab's content.
+       Because it scrolls on its own (separate from <aside>), switching
+       tabs can reset just this scrollbar back to the top — see the
+       switchTab() function in the <script> block below. */
+    overflow-y: auto;
+    height: 100%;
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  /* ── Dashboard Cards & Grid ──────────────────────────────────────────── */
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+  @media (max-width: 900px) {
+    .app-container { grid-template-columns: 1fr; }
+    aside { display: none; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── Spec Metric Widgets ─────────────────────────────────────────────── */
+  .metric-box {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--border-color);
+    padding: 16px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .metric-value {
+    font-family: var(--font-mono);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--brand-yellow);
+    margin-top: 4px;
+  }
+
+  .metric-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Data Tables ─────────────────────────────────────────────────────── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+  }
+
+  .data-table th {
+    background: rgba(0,0,0,0.3);
+    padding: 12px 16px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .data-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+
+  .status-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+  }
+
+  .tag-yellow { background: var(--brand-yellow-dim); color: var(--brand-yellow); }
+  .tag-green { background: var(--brand-green-dim); color: var(--brand-green); }
+  .tag-red { background: var(--brand-red-dim); color: var(--brand-red); }
+
+  /* ── History Timeline (added for the IH / Cub Cadet history page) ────
+     Simple vertical timeline: a colored line down the left side (.timeline),
+     with each event (.timeline-item) as a card that has a little dot
+     (::before on .timeline-year) marking its spot on the line.
+     To add a new event, just copy one .timeline-item block below in the
+     HTML and change the year/title/text.                                 */
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+    border-left: 3px solid var(--border-color);
+    margin: 20px 0;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 28px;
+  }
+
+  .timeline-item:last-child { margin-bottom: 0; }
+
+  /* the little dot marking the event on the vertical line */
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -34px;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--brand-yellow);
+    border: 3px solid var(--bg-dark);
+  }
+
+  .timeline-year {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--brand-yellow);
+    background: var(--brand-yellow-dim);
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+
+  .timeline-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .timeline-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  /* ── Author / Credit Footer Block ─────────────────────────────────────
+     Small "who built this" card shown at the very bottom of the page.    */
+  .author-block {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    margin-top: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-card);
+  }
+
+  .author-photo {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--brand-yellow);
+    flex-shrink: 0;
+  }
+
+  .author-name {
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .author-role {
+    font-size: 0.85rem;
+    color: var(--brand-yellow);
+    font-weight: 600;
+  }
+
+  .author-tagline {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+
+  /* ── Interactive Tools & Calculator ─────────────────────────────────── */
+  .calc-input {
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 10px 14px;
+    border-radius: 6px;
+    width: 100%;
+    font-family: var(--font-mono);
+    margin-top: 6px;
+  }
+
+  .btn {
+    background: var(--brand-yellow);
+    color: #000;
+    font-weight: 700;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn:hover { background: #d49f00; }
+
+  /* ── Custom Callouts & Quotes ────────────────────────────────────────── */
+  .field-note {
+    border-left: 3px solid var(--brand-yellow);
+    background: rgba(255, 255, 255, 0.02);
+    padding: 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+
+  .field-note.red { border-color: var(--brand-red); }
+  .field-note.green { border-color: var(--brand-green); }
+
+  .field-note strong {
+    color: var(--text-primary);
+    font-style: normal;
+  }
+
+  .img-frame {
+    width: 100%;
+    max-height: 380px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    /* "contain" shows the whole photo (no cropping); background fills the
+       letterbox gaps so it still looks intentional, not just floating. */
+    object-fit: contain;
+    background: rgba(0,0,0,0.25);
+    margin-top: 12px;
+  }
+
+  /* ── Photo Gallery ("Kohnke Moments") ──────────────────────────────────
+     Simple responsive grid of photo cards. To add a new photo:
+       1. Drop the image file into assets/images/
+       2. Copy one .gallery-item block in the HTML and point its <img> src
+          at the new file, then change the caption text.
+  */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .gallery-item {
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 220px;
+    object-fit: contain;
+    background: rgba(0,0,0,0.35);
+    display: block;
+  }
+
+  .gallery-caption {
+    padding: 12px 14px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .gallery-caption strong {
+    display: block;
+    color: var(--brand-yellow);
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+  }
+
+  /* ── Back to Top Button ────────────────────────────────────────────────
+     Floating round button, bottom-right corner. Hidden until you scroll
+     down a bit (toggled by the "show" class in the scroll listener at the
+     bottom of the <script> block). Click scrolls smoothly to the top.    */
+  #backToTopBtn {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--brand-yellow);
+    color: #000;
+    border: none;
+    font-size: 1.3rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    z-index: 200;
+  }
+
+  #backToTopBtn.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  #backToTopBtn:hover { background: #d49f00; }
+
+  .disclaimer {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border-color);
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand-group">
+      <span class="brand-badge">CUB CADET</span>
+      <div>
+        <div class="brand-title">Zero-Turn Incident Command Hub</div>
+        <div class="brand-subtitle">Model 17BIEAEE010 · 42" S-Span Deck · 21.5 HP Kohler Engine</div>
+      </div>
+    </div>
+    <div class="owner-chip">
+      Operator: <span>John Kohnke</span>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside>
+      <ul class="nav-menu">
+        <li class="nav-item active" onclick="switchTab('overview')">
+          <span>⚡</span> Command &amp; Specs
+        </li>
+        <li class="nav-item" onclick="switchTab('quickref')">
+          <span>📋</span> Quick Reference
+        </li>
+        <li class="nav-item" onclick="switchTab('breakin')">
+          <span>⏱</span> Break-In Checklist
+        </li>
+        <li class="nav-item" onclick="switchTab('maintenance')">
+          <span>🛠</span> Master Maintenance
+        </li>
+        <li class="nav-item" onclick="switchTab('care')">
+          <span>🧼</span> Care &amp; Operating Tips
+        </li>
+        <li class="nav-item" onclick="switchTab('calendar')">
+          <span>📅</span> FL Mowing Calendar
+        </li>
+        <li class="nav-item" onclick="switchTab('troubleshooting')">
+          <span>🔍</span> Diagnostics &amp; Mistakes
+        </li>
+        <li class="nav-item" onclick="switchTab('staugustine')">
+          <span>🌱</span> St. Augustine &amp; Heritage
+        </li>
+        <!-- Added 9/10: History Timeline tab, built from MostSoughtAfterIH.docx
+             and cubCadetHistory_FunFacts.docx plus extra web research -->
+        <li class="nav-item" onclick="switchTab('history')">
+          <span>🕰️</span> History Timeline
+        </li>
+        <!-- Added 9/10: Photo gallery of "Kohnke Moments" -->
+        <li class="nav-item" onclick="switchTab('gallery')">
+          <span>📸</span> Kohnke Moments
+        </li>
+        <li class="nav-item" onclick="switchTab('notes')">
+          <span>📝</span> Field Notes &amp; Lore
+        </li>
+        <!-- Added 9/9: pulled in from the 9/7 Desktop draft, this tab did not exist before -->
+        <li class="nav-item" onclick="switchTab('disclaimers')">
+          <span>🚜</span> Rookie Disclaimers
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Panel -->
+    <main>
+
+      <!-- TAB 1: COMMAND & SPECS -->
+      <div id="overview" class="tab-content active">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Program Overview</div>
+            <span class="status-tag tag-green">OPERATIONAL</span>
+          </div>
+          <p style="color: var(--text-secondary); margin-bottom: 20px;">
+            Official Cathy-mandated zero-turn program commissioned for John Kohnke after epic lawn turns. This command hub integrates maintenance tracking, yard calculators, and operational field notes.
+          </p>
+          <div class="grid-4">
+            <div class="metric-box">
+              <div class="metric-label">Model Number</div>
+              <div class="metric-value">17BIEAEE010</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">Engine Power</div>
+              <div class="metric-value">21.5 HP</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">Deck Width</div>
+              <div class="metric-value">42" S-Span</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">Purchase Date</div>
+              <div class="metric-value">August 2026</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Hardware Specs Table -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Technical Specifications</div>
+            </div>
+            <table class="data-table">
+              <tbody>
+                <tr><td><strong>Engine Type</strong></td><td>Kohler 21.5 HP — air-cooled, single-cylinder</td></tr>
+                <tr><td><strong>Drive System</strong></td><td>Sealed hydrostatic</td></tr>
+                <tr><td><strong>Oil Spec</strong></td><td>SAE 10W-30 (5 hr break-in, then every 50 hrs)</td></tr>
+                <tr><td><strong>Spark Plug</strong></td><td>KM-BR4ES</td></tr>
+                <tr><td><strong>Tire Pressures</strong></td><td>Rear: 10–12 PSI | Front: 14 PSI</td></tr>
+                <tr><td><strong>Battery</strong></td><td>12V Lawn Tractor Battery</td></tr>
+                <tr><td><strong>Purchase Price</strong></td><td>$3,599.99</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- First Lap Photo & Calc -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">John's First Lap</div>
+            </div>
+            <img src="assets/images/firstTime.jpeg" alt="John Kohnke riding his Cub Cadet zero-turn mower" class="img-frame">
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 8px; text-align: center;">
+              John Kohnke takes his brand-new Cub Cadet zero-turn for its first lap — price tag still swinging.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: QUICK REFERENCE -->
+      <div id="quickref" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Quick Reference Guide</div>
+          </div>
+          <div class="field-note">
+            <strong>John Moment:</strong> John, if you only read one section of this system, make it this one.
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Interval</th>
+                <th>Task</th>
+                <th>John's Tip</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="status-tag tag-yellow">Every Mow</span></td><td>Check oil level</td><td>Takes 10 seconds. Do it.</td></tr>
+              <tr><td><span class="status-tag tag-yellow">Every Mow</span></td><td>Blow off engine &amp; deck</td><td>Grass on the hydro fan = overheating.</td></tr>
+              <tr><td><span class="status-tag tag-yellow">Every Mow</span></td><td>Inspect blades visually</td><td>Look for bends, chips, or dullness.</td></tr>
+              <tr><td><span class="status-tag tag-yellow">Every Mow</span></td><td>Check tire pressure</td><td>Uneven pressure = uneven cut.</td></tr>
+              <tr><td><span class="status-tag tag-green">Every 25 Hrs</span></td><td>Grease all fittings</td><td>Front axle, steering sector, spindles.</td></tr>
+              <tr><td><span class="status-tag tag-green">Every 25 Hrs</span></td><td>Inspect deck belt</td><td>Look for glazing, cracking, fraying.</td></tr>
+              <tr><td><span class="status-tag tag-green">Every 25 Hrs</span></td><td>Clean deck underside</td><td>Scrape off grass buildup to prevent rust.</td></tr>
+              <tr><td><span class="status-tag tag-red">Every 50 Hrs</span></td><td>Change oil + filter</td><td>SAE 10W-30, drain when warm.</td></tr>
+              <tr><td><span class="status-tag tag-red">Every 50 Hrs</span></td><td>Sharpen/replace blades</td><td>Dull blades tear grass, invite disease.</td></tr>
+              <tr><td><span class="status-tag tag-red">Every 50 Hrs</span></td><td>Replace air filter</td><td>Hold to light — can't see through it? Replace it.</td></tr>
+              <tr><td><span class="status-tag tag-red">Seasonal</span></td><td>Replace fuel filter</td><td>Cheap insurance against fuel system issues.</td></tr>
+              <tr><td><span class="status-tag tag-red">Seasonal</span></td><td>Replace spark plug</td><td>KM-BR4ES — easy swap, big difference.</td></tr>
+              <tr><td><span class="status-tag tag-red">Seasonal</span></td><td>Full hardware inspection</td><td>Tighten everything you can reach.</td></tr>
+              <tr><td><span class="status-tag tag-red">Seasonal</span></td><td>Battery check</td><td>Load-test before storing for off-season.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 3: BREAK-IN CHECKLIST -->
+      <div id="breakin" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Break-In Checklist (First 5 Hours)</div>
+          </div>
+          <p style="color: var(--text-secondary); margin-bottom: 16px;">
+            The first 5 hours set the tone for the engine's entire life. Follow this protocol exactly.
+          </p>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">Done</th>
+                <th>Phase</th>
+                <th>Required Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="checkbox" class="task-check"></td>
+                <td><strong>Before Start</strong></td>
+                <td>Check oil (SAE 10W-30), verify fresh fuel, set rear tires (10-12 PSI), tighten all loose bolts.</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="task-check"></td>
+                <td><strong>First 15 Mins</strong></td>
+                <td>Run at half throttle for initial 15 minutes. Avoid full-load heavy mowing.</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="task-check"></td>
+                <td><strong>Hours 1–5</strong></td>
+                <td>Mow lightly. Inspect for oil or fuel leaks after every pass.</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="task-check"></td>
+                <td><strong>At 5 Hours (MANDATORY)</strong></td>
+                <td>Change engine oil immediately to flush metal wear particles. Re-torque deck bolts, inspect belt tension, grease zerks.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="field-note red" style="margin-top: 16px;">
+            <strong>⚠ CAUTION:</strong> Do NOT skip the 5-hour break-in oil change. Leaving initial wear particles in the crankcase accelerates engine wear.
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: MASTER MAINTENANCE TRACKER -->
+      <div id="maintenance" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Master Maintenance Schedule Tracker</div>
+            <button class="btn" onclick="resetCheckboxes()">Reset Checklists</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">Done</th>
+                <th>Interval</th>
+                <th>Maintenance Item</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="checkbox" class="task-check"></td>
+                <td><span class="status-tag tag-yellow">Every Mow</span></td>
+                <td>Oil Dipstick Check</td>
+                <td>Pull dipstick, wipe, reinsert. Takes 10 seconds.</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="task-check"></td>
+                <td><span class="status-tag tag-yellow">Every Mow</span></td>
+                <td>Debris Blowout</td>
+                <td>Use leaf blower on engine &amp; deck. Grass on hydro fans causes catastrophic overheating.</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="task-check"></td>
+                <td><span class="status-tag tag-yellow">Every Mow</span></td>
+                <td>Blade &amp; Pressure Check</td>
+                <td>Inspect for blade bends/dullness. Rears: 10–12 PSI, Fronts: 14 PSI.</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="task-check"></td>
+                <td><span class="status-tag tag-green">Every 25 Hrs</span></td>
+                <td>Chassis Lubrication</td>
+                <td>Grease front axle pivot, steering sector gear, and spindle zerks with multi-purpose grease.</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="task-check"></td>
+                <td><span class="status-tag tag-green">Every 25 Hrs</span></td>
+                <td>Belt &amp; Deck Scraping</td>
+                <td>Inspect deck belt for glazing/cracking. Scrape grass buildup from deck underside to stop rust.</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="task-check"></td>
+                <td><span class="status-tag tag-red">Every 50 Hrs</span></td>
+                <td>Oil &amp; Filter Service</td>
+                <td>SAE 10W-30. Drain warm. Replace filter every other oil change minimum.</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="task-check"></td>
+                <td><span class="status-tag tag-red">Every 50 Hrs</span></td>
+                <td>Blade Sharpening &amp; Air Filter</td>
+                <td>Sharpen blades. Replace paper filter element if opaque when held to light.</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="task-check"></td>
+                <td><span class="status-tag tag-red">Every Season</span></td>
+                <td>Fuel Filter &amp; Spark Plug</td>
+                <td>Replace inline fuel filter ($5) and KM-BR4ES spark plug ($4) for fast starting.</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" class="task-check"></td>
+                <td><span class="status-tag tag-red">Every Season</span></td>
+                <td>Hardware Inspection &amp; Battery</td>
+                <td>Tighten all deck &amp; frame bolts. Load-test battery before storing for off-season.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 5: CARE & OPERATING TIPS -->
+      <div id="care" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Cleaning, Care &amp; Pro Operating Tips</div>
+          </div>
+          <div class="grid-2">
+            <div>
+              <h3 style="color: var(--brand-yellow); margin-bottom: 12px;">Cleaning &amp; Care Rules</h3>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem; color: var(--text-secondary);">
+                <li>• <strong>Blow Off Post-Mow:</strong> Use leaf blower or compressed air. Never pressure wash spindles (destroys grease seals).</li>
+                <li>• <strong>Hydro Fan Maintenance:</strong> Keep clear in FL heat. Scrape deck underside while clippings are fresh.</li>
+                <li>• <strong>Fuel Care:</strong> Use fresh unleaded every 30 days. Add Sta-Bil fuel stabilizer if sitting &gt;30 days.</li>
+                <li>• <strong>Storage &amp; UV Protection:</strong> Store covered in shed/tarp. Wipe vinyl seat with UV protectant against FL sun.</li>
+              </ul>
+            </div>
+            <div>
+              <h3 style="color: var(--brand-yellow); margin-bottom: 12px;">Hard-Won Operating Rules</h3>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem; color: var(--text-secondary);">
+                <li>• <strong>Sharp Blades &amp; Dry Grass:</strong> Sharpen every 50 hrs. Never mow wet grass (causes clumping and deep ruts).</li>
+                <li>• <strong>The 1/3 Rule:</strong> Never cut off more than 1/3 of grass blade height in one pass to avoid stressing turf.</li>
+                <li>• <strong>Alternate Patterns:</strong> Change mowing directions weekly to prevent severe soil compaction and ruts.</li>
+                <li>• <strong>Vibration Warning:</strong> Excessive shaking = bent blade or loose spindle. Shut off immediately!</li>
+              </ul>
+            </div>
+          </div>
+          <div class="field-note green" style="margin-top: 20px;">
+            <strong>Did You Know?</strong> Clippings are 80-85% water. Dried clippings trap moisture against metal like concrete, accelerating deck rust. Scrape weekly!
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: FLORIDA CALENDAR -->
+      <div id="calendar" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Florida St. Augustine Mowing Rhythm</div>
+          </div>
+          <div class="field-note">
+            <strong>John Moment:</strong> In Ohio, winter buries mowers in snow. In Florida, winter just gives you a weekend off. Enjoy it — spring comes fast!
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Frequency</th>
+                <th>Cut Height</th>
+                <th>Fertilize?</th>
+                <th>Seasonal Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Jan – Feb</td><td>Every 3–4 wks</td><td>3.5–4"</td><td>No</td><td>Dormant season. Mow only if needed.</td></tr>
+              <tr><td>March</td><td>Every 2–3 wks</td><td>3.5–4"</td><td>No</td><td>Grass waking up. Watch for spring weeds.</td></tr>
+              <tr><td>April</td><td>Weekly</td><td>3.5–4"</td><td>Yes (Slow-rel)</td><td>First fertilizer application of the year.</td></tr>
+              <tr><td>May – Jun</td><td>Weekly</td><td>3.5–4"</td><td>Yes (June)</td><td>Peak growth season. Mow consistently.</td></tr>
+              <tr><td>July – Aug</td><td>Weekly</td><td>4"</td><td>No</td><td>Heat stress. Raise deck to 4". Mow at 7 AM.</td></tr>
+              <tr><td>September</td><td>Weekly</td><td>3.5–4"</td><td>Yes (Light)</td><td>Still growing. Final fertilizer window.</td></tr>
+              <tr><td>October</td><td>Every 2 wks</td><td>3.5"</td><td>No</td><td>Growth slowing down. Reduce frequency.</td></tr>
+              <tr><td>Nov – Dec</td><td>Every 3–4 wks</td><td>3.5"</td><td>No</td><td>Near-dormant. Minimal mowing needed.</td></tr>
+            </tbody>
+          </table>
+          <div class="field-note red" style="margin-top: 16px;">
+            <strong>⚠ CAUTION:</strong> Never mow at 2 PM in Florida mid-summer heat. Stresses both the operator and the Kohler engine. Mow early morning!
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 7: TROUBLESHOOTING & MISTAKES -->
+      <div id="troubleshooting" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Interactive Diagnostic Tool</div>
+          </div>
+          <select id="diagSelect" class="calc-input" onchange="runDiagnostic()" style="margin-bottom: 20px;">
+            <option value="">-- Select Symptom to Diagnose --</option>
+            <option value="start">Won't Start</option>
+            <option value="cut">Uneven Cut / Striping Issues</option>
+            <option value="vibrate">Excessive Machine Vibration</option>
+            <option value="pull">Pulls to One Side</option>
+            <option value="overheat">Engine Overheating</option>
+            <option value="smoke">Smoke or Battery Dying</option>
+          </select>
+          <div id="diagResult" class="field-note" style="display: none;"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Hall of Fame Mistakes — Avoid These!</div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Incident</th>
+                <th>Lesson Learned</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>The Stale Fuel Incident</strong></td>
+                <td>Left fuel all winter without stabilizer. Cleaned carb for 3 hours in Feb. <em>Always use Sta-Bil.</em></td>
+              </tr>
+              <tr>
+                <td><strong>Pressure Washer Mistake</strong></td>
+                <td>Blasted spindles to get clean. Destroyed two sealed bearings ($180 fix). <em>Use air only!</em></td>
+              </tr>
+              <tr>
+                <td><strong>Skipped 5-Hour Oil Change</strong></td>
+                <td>"Seemed fine" so oil wasn't changed. Accelerated engine wear. <em>Flush break-in oil!</em></td>
+              </tr>
+              <tr>
+                <td><strong>The Wet Grass Decision</strong></td>
+                <td>Mowed after a rainstorm. Clogged deck solid and left deep ruts. <em>Wait for dry grass!</em></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 8: ST. AUGUSTINE & HERITAGE -->
+      <div id="staugustine" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">St. Augustine Grass Management</div>
+          </div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem; color: var(--text-secondary);">
+            <li>• <strong>Cutting Rules:</strong> Maintain height at 3.5–4 inches (never below 3"). Never cut off &gt;1/3 height. Raise deck to 4" in July/Aug heat to shade root system.</li>
+            <li>• <strong>Watering &amp; Feeding:</strong> 1 inch/week early morning (before 10 AM). Fertilize April, June, and Sept only. Never fertilize Oct–March.</li>
+            <li>• <strong>Pests &amp; Fungus:</strong> Watch for Chinch bugs in dry brown patches. Brown patch fungus comes from evening watering — keep watering to mornings!</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">History &amp; Heritage: 60+ Years of Quality</div>
+          </div>
+          <p style="color: var(--text-secondary); margin-bottom: 12px;">
+            Cub Cadet started in 1961 built alongside International Harvester farm equipment. They were overbuilt by people who made machines to plow fields, not just clip grass. That farmer DNA remains today: heavy steel, simple drivetrains, and repairable components.
+          </p>
+          <p style="color: var(--text-secondary);">
+            So when you fire up that Kohler engine, you’re continuing an American tradition that started long before either of us argued with gates. You're working with a machine built to show up, cut right, and survive.
+          </p>
+          <div class="field-note green" style="text-align: center; margin-top: 16px;">
+            <strong>Ride on, John. You're part of the heritage now.</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 9: FIELD NOTES & LORE -->
+      <div id="notes" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">A Note Before You Begin</div>
+          </div>
+          <div class="field-note">
+            "John, listen — you’re no rookie. You’ve been fixing, lifting, dragging, and cussing at things forever. You’ve probably already figured out half this manual just by standing there with your hands on your hips. I wrote this not because you needed it — you could mow a lawn with a fork taped to a broom handle — but because you deserved it."
+            <br><br>
+            <strong>— Gary Chamblin</strong>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Field Notes &amp; Zero-Turn Zingers</div>
+          </div>
+          
+          <div class="grid-2">
+            <div class="field-note red">
+              <strong>Zero-Turn Driving School:</strong><br>
+              Step 1: Start mower. Step 2: Tear up lawn like escaping police. Step 3: Cathy arrives. Step 4: Regret.
+            </div>
+            <div class="field-note">
+              <strong>Academy Motto:</strong><br>
+              "Precision is optional; survivability is mandatory. We don't teach straight lines — we teach: ‘I didn't hit the garden, Cathy, I expanded the lawn.’"
+            </div>
+            <div class="field-note green">
+              <strong>Incident Report:</strong><br>
+              Cause: Operator enthusiasm | Damage: Lawn integrity compromised | Witness: Cathy | Status: Husband in danger
+            </div>
+            <div class="field-note red">
+              <strong>When Cathy Pulls In:</strong><br>
+              "John can manage wildland fires and statewide disaster coordination… but he still can’t coordinate a clean turn in front of the house."
+            </div>
+          </div>
+
+          <!-- NEW ADDITIONS INTEGRATED INTO ZINGERS & RHYMES -->
+          <div style="margin-top: 24px;">
+            <h3 style="color: var(--brand-yellow); margin-bottom: 16px;">The Mower’s Remorse</h3>
+            <div class="field-note red">
+              He mastered wildland fires and tactical ops,<br>
+              But the moment he turns, a turf chunk drops.<br>
+              Now he’s staring at ruts where the lawn used to grow,<br>
+              Praying Cathy believes it’s a high-tech aero-mow.
+            </div>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <h3 style="color: var(--brand-yellow); margin-bottom: 16px;">The Kohler Engine Ballad</h3>
+            <div class="field-note">
+              He can coordinate a multi-agency hurricane response with zero panic,<br>
+              Map out evacuations and direct heavy fleet mechanics,<br>
+              But the second that 21.5 HP Kohler roars to life in the yard,<br>
+              He steers into the birdbath and blames it on the guard.<br><br>
+              Cathy steps onto the porch, coffee mug in hand:<br>
+              <em>"John, you just turned our front yard into Normandy Beach sand."</em>
+            </div>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <h3 style="color: var(--brand-yellow); margin-bottom: 16px;">Puns to Keep You in the Good Graces</h3>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem; color: var(--text-secondary);">
+              <li>• <strong>Shear Panic:</strong> The exact emotion when you hear her car turn down the driveway.</li>
+              <li>• <strong>Blade of Glory:</strong> What you aimed for before you created a crop circle in the St. Augustine.</li>
+              <li>• <strong>Grounds for Divorce:</strong> What happens when "zero-turn" becomes "zero-lawn."</li>
+              <li>• <strong>De-turf Defense:</strong> "I didn't destroy the grass, Cathy—I just gave it a high-speed haircut."</li>
+            </ul>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <h3 style="color: var(--brand-yellow); margin-bottom: 16px;">The Operator Quirks</h3>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem; color: var(--text-secondary);">
+              <li>• <strong>The "Cathy Check":</strong> Looking at the driveway every 45 seconds instead of looking at the grass in front of you.</li>
+              <li>• <strong>The Tactical Teardrop:</strong> Doing a 15-foot wide arc to make a simple 90-degree turn just so the rear tires don't leave a burn mark.</li>
+              <li>• <strong>Post-Mow Crime Scene Cleanup:</strong> Sweeping the runaway dirt back into the ruts with your boots before the garage door opens.</li>
+            </ul>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <h3 style="color: var(--brand-yellow); margin-bottom: 16px;">Florida Heat &amp; Domestic Intelligence</h3>
+            <div class="grid-2">
+              <div class="field-note green">
+                <strong>The 7:00 AM Sneak Mow:</strong><br>
+                John claims morning mowing "prevents heat stress on the St. Augustine." Cathy knows the truth: it’s the only time slot where she’s too tired to come outside and stop him from drifting around the AC unit.
+              </div>
+              <div class="field-note red">
+                <strong>Tactical Camouflage:</strong><br>
+                Pushing fresh grass clippings over the bare dirt patches with a leaf blower like a dog trying to cover up a hole in the carpet before anyone notices.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!--
+        TAB: HISTORY TIMELINE (added 9/10)
+        Built from two source docs the user provided:
+          - MostSoughtAfterIH.docx (rare/collectible IH Cub Cadet models)
+          - cubCadetHistory_FunFacts.docx (brand history + fun facts)
+        plus a few extra dates confirmed via web research (marked below).
+        To add a new event: copy a <div class="timeline-item"> block and
+        change the year/title/text. To add a new collector model, copy a
+        row in the "Most Sought-After Models" table below.
+      -->
+      <div id="history" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Cub Cadet &amp; International Harvester — The Full Story</div>
+          </div>
+          <p style="color: var(--text-secondary); margin-bottom: 12px;">
+            Every Cub Cadet, including John's, traces back to a Louisville, Kentucky factory
+            floor in 1960. Here's the timeline from "why does IH make a tiny tractor" to
+            the zero-turn sitting in the garage today.
+          </p>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-year">1960</div>
+              <div class="timeline-title">A Premium Idea at International Harvester</div>
+              <div class="timeline-text">
+                International Harvester (IH), already famous for Farmall farm tractors, greenlights a
+                new line of small, heavy-duty lawn &amp; garden tractors out of its Louisville, KY plant —
+                aimed at suburban homeowners who wanted "real tractor" durability, not a toy mower.
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-year">1961</div>
+              <div class="timeline-title">The Original Cub Cadet</div>
+              <div class="timeline-text">
+                The first Cub Cadet (Model 100 / "Original") ships with a 7-hp Kohler engine and
+                a cast-iron rear end and drive shaft borrowed straight from IH's full-size Farmall
+                Cub tractor. Early units with round fenders and cast-iron reduction housings are now
+                the most prized collector pieces of the whole line.
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-year">1963</div>
+              <div class="timeline-title">Shaft-Drive Arrives</div>
+              <div class="timeline-text">
+                IH introduces its first shaft-drive Cub Cadet model, improving reliability over the
+                early belt-driven setups — another step toward "built like a farm tractor."
+              </div>
+            </div>
+
+            <div class="timeline-year-note field-note" style="margin: 0 0 16px 0;">
+              <strong>Why Yellow &amp; White?</strong> IH deliberately chose yellow-and-white for Cub Cadet
+              instead of "Farmall Red," so the little homeowner tractors would never be confused with
+              its commercial farm equipment lineup.
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-year">1966</div>
+              <div class="timeline-title">Hydrostatic Drive Pioneer</div>
+              <div class="timeline-text">
+                The Model 123 becomes the first garden tractor on the market with a hydrostatic
+                transmission — no clutch, no gears, just push a pedal. This is the direct ancestor
+                of the clutchless hydro drive still used in John's zero-turn today.
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-year">1971–1980</div>
+              <div class="timeline-title">The Wide-Frame &amp; Quietline Era</div>
+              <div class="timeline-text">
+                IH rolls out its best-loved workhorse models: the 149 (wide-frame, hydraulic deck lift),
+                the 1650 Quietline (rubber-isolated engine mounts to cut vibration/noise), and in 1974
+                the ultra-rare Model 169 — only ~4,000 built in a 5-month run, packing the highest
+                horsepower single-cylinder engine IH ever put in a garden tractor.
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-year">1976</div>
+              <div class="timeline-title">The "Spirit of '76" Bicentennial Special</div>
+              <div class="timeline-text">
+                A limited commemorative model built for the U.S. Bicentennial — white paint, red/blue
+                decals, and star graphics. Unrestored originals are among the most valuable Cub Cadets
+                a collector can find today.
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-year">1979–1981</div>
+              <div class="timeline-title">The Red-and-Black Era &amp; the "Super Garden Tractor"</div>
+              <div class="timeline-text">
+                Model 782 introduces the iconic red-and-black IH color scheme with twin-cylinder power.
+                The Model 982 follows as the original "Super Garden Tractor" — a stretched frame with
+                power steering and a true 3-point hitch, aimed at users who wanted a mini farm tractor,
+                not just a mower.
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-year">1981</div>
+              <div class="timeline-title">Sold to MTD</div>
+              <div class="timeline-text">
+                Financial trouble forces International Harvester to sell the Cub Cadet division to MTD
+                (Modern Tool &amp; Die), which forms the Cub Cadet Corporation and shifts manufacturing to
+                Brownsville, Tennessee. This ends the 20-year "IH era" that vintage collectors chase today.
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-year">1990s–2000s</div>
+              <div class="timeline-title">Zero-Turn Innovation</div>
+              <div class="timeline-text">
+                Cub Cadet pushes hard into residential and commercial zero-turn mowers, eventually
+                launching its Z-Series (1997) and pioneering steering-wheel-controlled, 4-wheel-steer
+                zero-turns (Synchro-Steer) so operators could handle steep hills without dual lap bars —
+                the same basic zero-turn concept John drives today, minus the "aero-mow" excuses.
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-year">2021</div>
+              <div class="timeline-title">Stanley Black &amp; Decker Takes Full Ownership</div>
+              <div class="timeline-text">
+                Stanley Black &amp; Decker acquires full ownership of MTD, bringing Cub Cadet under the
+                same corporate roof as DeWalt and Craftsman.
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-year">2026</div>
+              <div class="timeline-title">John Kohnke Joins the Story</div>
+              <div class="timeline-text">
+                John buys his own Cub Cadet zero-turn (model 17BIEAEE010, 21.5 HP) and — after a few
+                enthusiastic Synchro-Steer moments in front of Cathy — earns his place in Cub Cadet lore.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Collector reference table pulled from MostSoughtAfterIH.docx -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Most Sought-After Vintage IH Cub Cadet Models</div>
+          </div>
+          <p style="color: var(--text-secondary); margin-bottom: 12px;">
+            For fun/reference only — not John's model. These are the IH-era (1961–1981) tractors
+            collectors chase hardest, split into rare "holy grails" and tough daily-use workhorses.
+          </p>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Years</th>
+                <th>Engine / Drive</th>
+                <th>Why Collectors Want It</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Original (Model 100)</strong></td><td>1961–1963</td><td>7-hp Kohler</td><td>The tractor that started it all — early round-fender units are the holy grail.</td></tr>
+              <tr><td><strong>149</strong></td><td>1971–1974</td><td>14-hp Kohler K321 / Hydro</td><td>Widely considered IH's best all-around Cub Cadet — hydraulic deck lift, wide frame.</td></tr>
+              <tr><td><strong>169</strong></td><td>1974</td><td>16-hp Kohler K341</td><td>Only ~4,000 made in a 5-month run — highest-hp single-cylinder IH ever built.</td></tr>
+              <tr><td><strong>800</strong></td><td>1974–1980</td><td>8-hp / Gear-drive</td><td>Lowest-production regular IH model (~2,000 made) — sold poorly, now rare.</td></tr>
+              <tr><td><strong>1650 Quietline</strong></td><td>1974–1980</td><td>16-hp Kohler K341 / Hydro</td><td>Top-of-the-line Quietline — rubber-isolated engine mounts, quieter running.</td></tr>
+              <tr><td><strong>"Spirit of '76"</strong></td><td>1976</td><td>Bicentennial Special</td><td>Rare commemorative paint scheme — a big premium item for collectors.</td></tr>
+              <tr><td><strong>782</strong></td><td>1979–1981</td><td>17-hp Kohler KT17 Twin / Hydro</td><td>First to wear the iconic red-and-black IH color scheme.</td></tr>
+              <tr><td><strong>982</strong></td><td>1979–1981</td><td>19-hp Onan B48G Twin / Hydro</td><td>The original "Super Garden Tractor" — power steering, true 3-point hitch.</td></tr>
+            </tbody>
+          </table>
+          <div class="field-note green" style="margin-top: 16px;">
+            <strong>Fun Fact:</strong> Vintage IH-era Cub Cadets (1960–1981) still have a huge collector
+            following today — dedicated rallies, tractor pulls, and plow days happen just for them.
+          </div>
+        </div>
+      </div>
+
+      <!--
+        TAB: KOHNKE MOMENTS PHOTO GALLERY (added 9/10)
+        A grid of photo cards documenting John's zero-turn career.
+        To add a new photo: drop the file into assets/images/, then copy
+        one <div class="gallery-item"> block below and update the src/alt
+        text + caption. That's it — the grid auto-arranges itself.
+      -->
+      <div id="gallery" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Kohnke Moments: A Photographic Retrospective</div>
+          </div>
+          <div class="field-note">
+            <strong>Curator's Note:</strong> Every great operator needs an origin story, a highlight
+            reel, and at least one photo Cathy will use as leverage later. Below is the official,
+            lightly-exaggerated visual archive of John Kohnke and his zero-turn — captured mid-glory,
+            mid-turn, and mid-"I meant to do that."
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="gallery-grid">
+            <div class="gallery-item">
+              <img src="assets/images/firstTime.jpeg" alt="John Kohnke on his new Cub Cadet zero-turn">
+              <div class="gallery-caption">
+                <strong>Exhibit A: The Maiden Voyage</strong>
+                Price tag still swinging, confidence at an all-time high. Historians mark this as
+                the exact moment the neighborhood lawn edges got nervous.
+              </div>
+            </div>
+            <div class="gallery-item">
+              <img src="assets/images/john-focus.jpeg" alt="John Kohnke riding his Cub Cadet zero-turn mower">
+              <div class="gallery-caption">
+                <strong>Exhibit B: Peak Focus</strong>
+                Full concentration, textbook posture. Somewhere off-camera, a flower bed is quietly
+                filing a restraining order.
+              </div>
+            </div>
+            <div class="gallery-item">
+              <img src="assets/images/epic-sunset.jpeg" alt="John Kohnke, heroic sunset zero-turn action shot">
+              <div class="gallery-caption">
+                <strong>Exhibit C: The Legend Edit</strong>
+                How John remembers it happening. Dramatic sunset, flying dirt clods, zero fear.
+                Cathy remembers it as "Tuesday, 10 AM, mostly just loud."
+              </div>
+            </div>
+            <div class="gallery-item">
+              <img src="assets/images/manual-cover.jpg" alt="Cover page of John Kohnke's Cub Cadet Owner's Guide, Kohnke Edition">
+              <div class="gallery-caption">
+                <strong>Exhibit D: The Official Cover Art</strong>
+                "Kohnke Edition — Custom Cub Cadet Ultima." For John, who mowed with whatever was
+                available for years and finally bought himself a real machine.
+              </div>
+            </div>
+            <div class="gallery-item">
+              <img src="assets/images/mandate-completion.jpg" alt="Cover page of Gary's Zero-Turn Academy and Cathy-Mandated Manual">
+              <div class="gallery-caption">
+                <strong>Exhibit E: The Cathy Mandate (Cover)</strong>
+                "Gary's Zero-Turn Academy & Cathy-Mandated Manual" — Special Edition: Old Dog
+                Edition, Version 1.0. Commissioned after weeks of panic turns and epic lawn destruction.
+              </div>
+            </div>
+            <div class="gallery-item">
+              <img src="assets/images/explosion-kohnke.jpg" alt="John Kohnke launched airborne off his Kohnke zero-turn">
+              <div class="gallery-caption">
+                <strong>Exhibit F: Liftoff Event</strong>
+                Witnesses report John achieved "brief but meaningful flight" while the mower kept
+                going without him. NTSB ruled it operator error. John rules it "a stylish dismount."
+              </div>
+            </div>
+            <div class="gallery-item">
+              <img src="assets/images/explosion-kohnke-quote.jpg" alt="Motivational poster of John Kohnke's zero-turn liftoff, with quote from Gary Chamblin">
+              <div class="gallery-caption">
+                <strong>Exhibit G: The Motivational Poster</strong>
+                "Who mows with grit, patience, pride, and a bomb-proof sense of humor? John Kohnke,
+                that's who." — Gary Chamblin, framing this incident as inspirational.
+              </div>
+            </div>
+            <div class="gallery-item">
+              <img src="assets/images/home-rupture.jpg" alt="John Kohnke driving his Kohnke zero-turn through a torn-up yard">
+              <div class="gallery-caption">
+                <strong>Exhibit H: The Home Rupture Incident</strong>
+                Yard status: reclassified as "active construction zone." John's mood: unbothered.
+              </div>
+            </div>
+            <div class="gallery-item">
+              <img src="assets/images/mower-mud.jpeg" alt="John Kohnke covered in mud on his Kohnke zero-turn">
+              <div class="gallery-caption">
+                <strong>Exhibit I: The Mud Bath</strong>
+                Started as a mowing job. Ended as a spa day, minus the relaxing part.
+              </div>
+            </div>
+            <div class="gallery-item">
+              <!-- Swapped the old checklist screenshot for a generated
+                   "Certificate of Success" graphic (assets/images/success-certificate.svg).
+                   It's an SVG, so it's just a text file — open it in any
+                   editor to tweak the wording, colors, or layout. -->
+              <img src="assets/images/success-certificate.svg" alt="Certificate of Success from the Cathy-Mandated Zero-Turn Improvement Program">
+              <div class="gallery-caption">
+                <strong>Exhibit J: The Success Report</strong>
+                Grass relocation reduced by "at least 40%." Emergency apology delivery speed
+                "considerably improved." Official verdict from Cathy: "He's still an old dog... but
+                Gary actually taught him a few new tricks."
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--
+        TAB 10: ROOKIE DISCLAIMERS (added 9/9)
+        Merged in from the 9/7 Desktop draft copy of this manual — this whole tab
+        was missing from this version. It's the joke "legal disclaimer" section.
+        If you want to add/remove a joke disclaimer, just copy one of the
+        <li class="disclaimer-item"> blocks below and edit the text.
+      -->
+      <div id="disclaimers" class="tab-content">
+        <div class="card">
+          <div class="notice-container" style="margin-top: 8px; padding: 20px; border: 1px solid var(--border-color); border-radius: 10px; background: rgba(245, 184, 0, 0.08);">
+            <div class="disclaimer-title" style="font-size: 1rem; font-weight: 700; color: var(--brand-yellow); margin-bottom: 12px;">
+              Official Notice
+            </div>
+
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">
+              This dynamic portal is a custom-built reference system developed exclusively for
+              <strong>John Kohnke</strong>. This project was fully coded, designed, and built independently
+              by <strong>Gary Chamblin</strong>, with the
+              <strong>profound hope that you eventually figure out how to drive a zero-turn without tearing up local infrastructure</strong>
+              in mind. <span style="color: var(--brand-yellow); font-weight: 700;">Cub Cadet</span>
+              is not affiliated with, endorsing, or responsible for this application.
+            </p>
+
+            <div class="disclaimer-title" style="font-size: 1rem; font-weight: 700; color: var(--brand-yellow); margin-bottom: 12px;">
+              🚜 Zero-Turn Rookie Disclaimers
+            </div>
+
+            <ul style="list-style: none; padding-left: 0; display: flex; flex-direction: column; gap: 14px; color: var(--text-secondary);">
+              <li>
+                <strong style="color: var(--brand-yellow);">The Lap Bar Panic:</strong>
+                This system is easier to navigate than dual steering levers. It will not cause you to accidentally reverse at 7 MPH into your own chain-link fence because you panicked.
+              </li>
+              <li>
+                <strong style="color: var(--brand-yellow);">The Involuntary Donut:</strong>
+                We accept zero liability for users trapped in a continuous, high-speed spin cycle in the center of the yard because they forgot how physics works.
+              </li>
+              <li>
+                <strong style="color: var(--brand-yellow);">The Etch-A-Sketch Lawn:</strong>
+                This portal ensures clean data, but it cannot fix a lawn that looks like a drunken maze. We guarantee accurate part numbers, not straight lines.
+              </li>
+              <li>
+                <strong style="color: var(--brand-yellow);">The Sunday Crack-of-Dawn Patrol:</strong>
+                Not responsible for flying coffee mugs from neighbors when you fire up a twin-cylinder engine at dawn just to show off your pivot turns.
+              </li>
+              <li>
+                <strong style="color: var(--brand-yellow);">The Maintenance Blindspot:</strong>
+                This database won't force you to check the oil. If you spend 45 minutes yanking a starter rope on a fouled spark plug, that is between you and your pride.
+              </li>
+              <li>
+                <strong style="color: var(--brand-yellow);">The Tailgate Launch:</strong>
+                We assume you understand the mathematical necessity of ramps. We are exempt from damages if you try to "gun it" over a trailer tailgate and high-center your brand-new cutting deck.
+              </li>
+              <li>
+                <strong style="color: var(--brand-yellow);">The Drainage Ditch Extrication Act:</strong>
+                This application contains zero coding to salvage your dignity when you misjudge a slope and slide gracefully backward into a muddy retention ditch, requiring a tactical rescue mission from the neighbor you actively ignore.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Disclaimer Banner -->
+        <div class="disclaimer">
+          OFFICIAL NOTICE: This dynamic portal is a custom-built reference system for John Kohnke. Cub Cadet is not affiliated with or responsible for this application.
+        </div>
+
+        <!--
+          AUTHOR / CREDIT BLOCK (added 9/10)
+          Moved inside this last tab (Rookie Disclaimers) on purpose so it
+          only shows here, not on every single tab. Swap the src on
+          .author-photo below for a different headshot anytime — just drop
+          the new image into assets/images/ and update the path.
+        -->
+        <div class="author-block">
+          <img src="assets/images/author-gary.jpeg" alt="Gary Chamblin" class="author-photo">
+          <div>
+            <div class="author-name">Gary Chamblin</div>
+            <div class="author-role">Author · Coder · Designer</div>
+            <div class="author-tagline">Built this whole command hub by hand for John — history, jokes, and all.</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Back to Top button — sits fixed in the bottom-right corner of every
+       tab. Hidden/shown and made to scroll via the JS at the bottom of the
+       page (search for "Back to Top" in the <script> block). -->
+  <button id="backToTopBtn" onclick="document.querySelector('main').scrollTo({top: 0, behavior: 'smooth'})" title="Back to top" aria-label="Back to top">↑</button>
+
+<script>
+  // Dynamic Tab Router
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+
+    // The content area (<main>) scrolls independently from the sidebar.
+    // Every time you click a new tab, snap its scroll position back to
+    // the top so you land on the start of the page instead of wherever
+    // the previous tab happened to be scrolled to.
+    document.querySelector('main').scrollTop = 0;
+  }
+
+  // Diagnostic Matrix Logic
+  function runDiagnostic() {
+    const val = document.getElementById('diagSelect').value;
+    const res = document.getElementById('diagResult');
+    
+    const solutions = {
+      "start": "<strong>Check Sequence:</strong> Check seat switch, brake pedal, battery voltage, fuel level.",
+      "cut": "<strong>Check Sequence:</strong> Check tire pressures first, then level deck and inspect blades.",
+      "vibrate": "<strong>DANGER: STOP IMMEDIATELY!</strong> Replace bent blades or bad spindles.",
+      "pull": "<strong>Check Sequence:</strong> Equalize rear tire pressures to 10-12 PSI.",
+      "overheat": "<strong>Check Sequence:</strong> Blow out engine fins & hydro fan with compressed air.",
+      "smoke": "<strong>Check Sequence:</strong> Correct oil level. Load-test battery (FL heat slays batteries in 2 yrs)."
+    };
+
+    if (val && solutions[val]) {
+      res.innerHTML = solutions[val];
+      res.style.display = 'block';
+    } else {
+      res.style.display = 'none';
+    }
+  }
+
+  // Task Reset Tool
+  function resetCheckboxes() {
+    document.querySelectorAll('.task-check').forEach(cb => cb.checked = false);
+  }
+
+  // Back to Top button — show it once you've scrolled down a bit, hide it
+  // near the top. Listens on <main> (the content area) since that's what
+  // actually scrolls now, not the whole window. Change the "150" below to
+  // adjust how far you have to scroll before it appears.
+  document.querySelector('main').addEventListener('scroll', function () {
+    const btn = document.getElementById('backToTopBtn');
+    if (this.scrollTop > 150) {
+      btn.classList.add('show');
+    } else {
+      btn.classList.remove('show');
+    }
+  });
+</script>
+
+</body>
+</html>
