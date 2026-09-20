@@ -81,8 +81,8 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: 150%;
+    /* object-fit: cover; */
     object-position: center bottom;
     display: block;
     z-index: 0;
@@ -736,6 +736,73 @@
     margin-bottom: 20px;
   }
 
+  .john-note-card {
+    position: relative;
+    border: 2px solid #59616d;
+    background:
+      radial-gradient(circle at 18px 18px, #c4c9cf 0 3px, #343a43 4px 7px, transparent 8px),
+      radial-gradient(circle at calc(100% - 18px) 18px, #c4c9cf 0 3px, #343a43 4px 7px, transparent 8px),
+      radial-gradient(circle at 18px calc(100% - 18px), #c4c9cf 0 3px, #343a43 4px 7px, transparent 8px),
+      radial-gradient(circle at calc(100% - 18px) calc(100% - 18px), #c4c9cf 0 3px, #343a43 4px 7px, transparent 8px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 4px),
+      linear-gradient(145deg, #343a43 0%, #1f242c 42%, #111419 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.18),
+      inset 0 -3px 0 rgba(0,0,0,0.45),
+      0 0 0 5px #111419,
+      0 0 0 7px #59616d,
+      0 18px 34px rgba(0, 0, 0, 0.44);
+  }
+
+  .john-note-card::before,
+  .john-note-card::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    border: 1px solid rgba(245, 184, 0, 0.48);
+  }
+
+  .john-note-card::before {
+    inset: 9px;
+    border-radius: 8px;
+  }
+
+  .john-note-card::after {
+    inset: 14px;
+    border-color: rgba(255,255,255,0.14);
+    border-radius: 6px;
+  }
+
+  .john-note-card .card-header {
+    position: relative;
+    z-index: 1;
+    margin: -4px -4px 24px;
+    padding: 12px 18px;
+    border: 1px solid #6c737d;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 7px),
+      linear-gradient(180deg, #303640, #171a20);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.14),
+      inset 0 -2px 0 rgba(0,0,0,0.42);
+  }
+
+  .john-note-card .card-title {
+    color: #e4e7eb;
+    font-family: var(--font-mono);
+    font-size: 0.92rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .john-note-card .status-tag {
+    border-color: #f5b800;
+    color: #f5b800;
+    background: rgba(245,184,0,0.08);
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
+  }
+
   .card-header {
     display: flex;
     justify-content: space-between;
@@ -950,6 +1017,139 @@
   .field-note strong {
     color: var(--text-primary);
     font-style: normal;
+  }
+
+  .john-note {
+    position: relative;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 34px 42px 38px;
+    border: 1px solid rgba(245, 184, 0, 0.72);
+    border-radius: 12px;
+    background:
+      radial-gradient(circle at 92% 8%, rgba(255, 201, 91, 0.2) 0 7%, transparent 24%),
+      linear-gradient(145deg, rgba(18, 93, 108, 0.28), rgba(245, 184, 0, 0.07) 48%, rgba(236, 112, 69, 0.16));
+    box-shadow:
+      inset 0 0 0 5px rgba(18, 93, 108, 0.22),
+      inset 0 0 0 7px rgba(245, 184, 0, 0.12),
+      0 12px 28px rgba(0, 0, 0, 0.24);
+    color: var(--text-secondary);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
+  .john-note::before,
+  .john-note::after {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #168c91, #f5b800 48%, #ee754d);
+    opacity: 0.85;
+  }
+
+  .john-note::before { top: 14px; }
+  .john-note::after { bottom: 14px; }
+
+  .john-note-banner {
+    margin: 0 auto 24px;
+    color: #f5b800;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .john-note-machine-plate {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+    margin: -2px auto 26px;
+    padding: 12px 18px;
+    border: 1px solid #555b68;
+    border-radius: 5px;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.1), transparent 35%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 3px),
+      #242832;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.12),
+      inset 0 -2px 0 rgba(0,0,0,0.35),
+      0 5px 12px rgba(0,0,0,0.28);
+    color: #d4d8df;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .john-note-machine-plate::before,
+  .john-note-machine-plate::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    margin-top: -5px;
+    border: 2px solid #777e8c;
+    border-radius: 50%;
+    background: #17191f;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.2);
+  }
+
+  .john-note-machine-plate::before { left: 6px; }
+  .john-note-machine-plate::after { right: 6px; }
+
+  .john-note-gear {
+    width: 30px;
+    height: 30px;
+    border: 7px dotted #aeb4bf;
+    border-radius: 50%;
+    background: radial-gradient(circle, #252a33 0 26%, #8d949f 27% 35%, #252a33 36% 100%);
+    box-shadow: 0 0 0 1px #101217, 0 0 0 3px rgba(245,184,0,0.22);
+    animation: johnNoteGearTurn 14s linear infinite;
+  }
+
+  .john-note-machine-specs {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    color: #f5b800;
+    white-space: nowrap;
+  }
+
+  .john-note-machine-specs span {
+    color: #d4d8df;
+  }
+
+  .john-note-machine-specs strong {
+    color: #f5b800;
+    font-weight: 700;
+  }
+
+  .john-note-plate-mark {
+    color: #ee754d;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  @keyframes johnNoteGearTurn {
+    to { transform: rotate(360deg); }
+  }
+
+  .john-note p {
+    margin-bottom: 18px;
+  }
+
+  .john-note strong {
+    color: var(--text-primary);
   }
 
   .img-frame {
@@ -1200,6 +1400,9 @@
         <li class="nav-item active" onclick="switchTab('overview')">
           <span>⚡</span> Command &amp; Specs
         </li>
+        <li class="nav-item" onclick="switchTab('john-note')">
+          <span>✉</span> A Note for John
+        </li>
         <li class="nav-item" onclick="switchTab('quickref')">
           <span>📋</span> Quick Reference
         </li>
@@ -1305,7 +1508,81 @@
         </div>
       </div>
 
-      <!-- TAB 2: QUICK REFERENCE -->
+      <!-- TAB 2: A NOTE FOR JOHN -->
+      <div id="john-note" class="tab-content">
+        <div class="card john-note-card">
+          <div class="card-header">
+            <div class="card-title">A Note for John</div>
+            <span class="status-tag">PERSONAL</span>
+          </div>
+
+          <div class="john-note">
+            <div class="john-note-machine-plate" aria-label="Mower engine specification plate">
+              <span class="john-note-gear" aria-hidden="true"></span>
+              <div class="john-note-machine-specs">
+                <strong>KOHLER 21.5 HP</strong>
+                <span>42&quot; S-SPAN DECK</span>
+              </div>
+              <span class="john-note-plate-mark">KOHNKE EDITION</span>
+            </div>
+            <div class="john-note-banner">Florida Summer Edition · 2026</div>
+            <p>
+              John, listen — you’re no rookie. You’ve been fixing things, lifting things,
+              dragging things, and occasionally cussing at things for as long as I’ve known you.
+              You’ve probably already figured out half of what’s in this manual just by staring
+              at the mower with your hands on your hips. The other half you’d eventually discover
+              by accident, probably while muttering,
+              <em>“Huh… didn’t know it did that.”</em>
+            </p>
+
+            <p>
+              But I wanted to put something real together for you anyway. Not because you needed it
+              — let’s be honest, you’d survive — but because you deserved it.
+            </p>
+
+            <p>
+              And me? I’m a guy who loves this stuff way more than any normal person should.
+              I’ve spent so many hours thinking about turf that the grass has started waving at me
+              when I walk by — sometimes politely, sometimes sarcastically.
+            </p>
+
+            <p>
+              I’ve trimmed edges so perfect that geometry teachers wept. I’ve battled weeds that had
+              the confidence of a raccoon in a Waffle House parking lot. I’ve argued with gates,
+              fences, sprinklers, and one extremely disrespectful patch of Bermuda that still owes me money.
+            </p>
+
+            <p>So consider this your official welcome to the club.</p>
+
+            <p>
+              Membership dues include sweat, sunscreen, and at least one heated argument with a gate
+              that <em>“should’ve been open.”</em>
+            </p>
+
+            <p>
+              The initiation ritual involves at least one moment where you scream
+              <strong>“WHO DESIGNED THIS?!”</strong>
+              at a bolt that has been minding its business since 1998.
+            </p>
+
+            <p>
+              Everything in this manual was built from scratch for you — your mower, your yard,
+              your situation. Written by someone who cares about doing it right the first time…
+              and who has absolutely yelled at a weed before.
+            </p>
+
+            <p style="margin-bottom: 0;">
+              <strong>Welcome to the club, John. Now let’s get to work.</strong>
+            </p>
+
+            <div style="text-align: right; margin-top: 20px;">
+              <strong>— Gary Chamblin</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: QUICK REFERENCE -->
       <div id="quickref" class="tab-content">
         <div class="card">
           <div class="card-header">
@@ -1617,11 +1894,6 @@
         <div class="card">
           <div class="card-header">
             <div class="card-title">A Note Before You Begin</div>
-          </div>
-          <div class="field-note">
-            "John, listen — you’re no rookie. You’ve been fixing, lifting, dragging, and cussing at things forever. You’ve probably already figured out half this manual just by standing there with your hands on your hips. I wrote this not because you needed it — you could mow a lawn with a fork taped to a broom handle — but because you deserved it."
-            <br><br>
-            <strong>— Gary Chamblin</strong>
           </div>
         </div>
 

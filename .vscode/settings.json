@@ -3,5 +3,20 @@
         "Test-Path": true,
         "Select": true,
         "Rename-Item": true
-    }
+    },
+    "chat.permissions.default": "autopilot",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.wordWrap": "on",
+    "chat.agent.maxRequests": 500,
+    "workbench.colorTheme": "Visual Studio Dark",
+    "editor.mouseWheelZoom": true,
+    "editor.formatOnPaste": true,
+    "editor.accessibilityPageSize": 500,
+    "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+    "editor.codeActions.triggerOnFocusChange": true,
+    "code-explainer.hover": true,
+    "code-explainer.streaming": true,
+    "emmet.showSuggestionsAsSnippets": true,
+    "npm-intellisense.scanDevDependencies": true,
+    "npm-intellisense.showBuildInLibs": false
 }
