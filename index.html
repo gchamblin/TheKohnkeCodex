@@ -153,13 +153,13 @@
       transform: scale(1.22) rotate(0deg);
     }
     47.5% {
-      /* Spin zero-turn at right end */
+      /* Hold at the right edge before changing direction. */
       left: calc(100% - 10px);
-      transform: scale(1.22) rotate(60deg) translateY(-8px);
+      transform: scale(1.22) rotate(0deg);
     }
     49% {
-      left: calc(100% - 10px);
-      transform: scale(1.22) rotate(135deg) translateY(-4px);
+      left: calc(100% - 25px);
+      transform: scale(1.22) rotate(0deg);
     }
     50% {
       /* Flipped horizontally and facing left to mow back */
@@ -171,13 +171,13 @@
       transform: scaleX(-1.22) scaleY(1.22) rotate(0deg);
     }
     97.5% {
-      /* Spin zero-turn at left end */
+      /* Hold at the left edge before changing direction. */
       left: -180px;
-      transform: scaleX(-1.22) scaleY(1.22) rotate(-60deg) translateY(-8px);
+      transform: scaleX(-1.22) scaleY(1.22) rotate(0deg);
     }
     99% {
-      left: -180px;
-      transform: scaleX(-1.22) scaleY(1.22) rotate(-135deg) translateY(-4px);
+      left: -170px;
+      transform: scaleX(-1.22) scaleY(1.22) rotate(0deg);
     }
     100% {
       left: -170px;
@@ -191,7 +191,8 @@
   }
 
   .header-cruising-mower .grass-clipping {
-    animation: continuousGrassShoot 0.32s ease-out infinite;
+    animation: continuousHeaderGrassShoot 0.42s ease-out infinite;
+    will-change: transform, opacity;
   }
   .header-cruising-mower .grass-1 { animation-delay: 0s; }
   .header-cruising-mower .grass-2 { animation-delay: 0.05s; }
@@ -200,6 +201,28 @@
   .header-cruising-mower .grass-5 { animation-delay: 0.20s; }
   .header-cruising-mower .grass-6 { animation-delay: 0.25s; }
   .header-cruising-mower .grass-7 { animation-delay: 0.30s; }
+
+  /* Keep a small overlap between clipping bursts so the stream does not
+     blink while the mower is rotating at either end of the track. */
+  @keyframes continuousHeaderGrassShoot {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) scale(0.6) rotate(0deg);
+    }
+    20% {
+      opacity: 1;
+    }
+    60% {
+      opacity: 0.95;
+      transform: translate(38px, 28px) scale(1.8) rotate(55deg);
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.7));
+    }
+    100% {
+      opacity: 1;
+      transform: translate(68px, 50px) scale(2.8) rotate(90deg);
+      filter: drop-shadow(0 10px 16px rgba(50, 215, 75, 0.8));
+    }
+  }
 
   /* ── Letter Tumble & Reassemble Animation when Mower Runs Over ──────── */
   .tumble-char {
@@ -1283,6 +1306,10 @@
         <path d="M 58 33 L 70 34 L 68 39 L 56 38 Z" fill="#121316" stroke="#F5B800" stroke-width="1.5"/>
         <!-- Cub Cadet Yellow Main Chassis Body -->
         <path d="M 16 30 L 42 30 L 53 20 L 62 20 L 62 29 L 16 30 Z" fill="#F5B800" stroke="#D49F00" stroke-width="1"/>
+        <!-- Visible deck skirt and side-discharge opening -->
+        <path d="M 13 37 L 68 37 L 64 43 L 17 43 Z" fill="#303541" stroke="#F5B800" stroke-width="2"/>
+        <path d="M 62 34 L 76 35 L 74 42 L 64 42 Z" fill="#17191F" stroke="#F5B800" stroke-width="2"/>
+        <path d="M 68 36 L 74 37 L 73 40 L 67 40 Z" fill="#050608"/>
         <!-- Kohler Engine Block & Air Filter Cover -->
         <rect x="20" y="19" width="14" height="10" rx="2" fill="#121316" stroke="#444" stroke-width="1"/>
         <!-- Operator Seat -->
@@ -1343,6 +1370,10 @@
 
           <!-- Cub Cadet Yellow Main Chassis Body -->
           <path d="M 16 30 L 42 30 L 53 20 L 62 20 L 62 29 L 16 30 Z" fill="#F5B800" stroke="#D49F00" stroke-width="1"/>
+          <!-- Visible deck skirt and side-discharge opening -->
+          <path d="M 13 37 L 68 37 L 64 43 L 17 43 Z" fill="#303541" stroke="#F5B800" stroke-width="2"/>
+          <path d="M 62 34 L 76 35 L 74 42 L 64 42 Z" fill="#17191F" stroke="#F5B800" stroke-width="2"/>
+          <path d="M 68 36 L 74 37 L 73 40 L 67 40 Z" fill="#050608"/>
 
           <!-- Kohler Engine Block & Air Filter Cover -->
           <rect x="20" y="19" width="14" height="10" rx="2" fill="#121316" stroke="#444" stroke-width="1"/>
