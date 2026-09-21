@@ -193,7 +193,8 @@
   .header-cruising-mower .grass-clipping {
     opacity: 0.9;
     transform: none;
-    animation: none;
+    stroke-dasharray: 8 18;
+    animation: headerGrassStream 0.5s linear infinite;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
   }
   .header-cruising-mower .grass-1 { animation-delay: 0s; }
@@ -203,6 +204,13 @@
   .header-cruising-mower .grass-5 { animation-delay: 0.20s; }
   .header-cruising-mower .grass-6 { animation-delay: 0.25s; }
   .header-cruising-mower .grass-7 { animation-delay: 0.30s; }
+
+  /* Move visible clipping segments along each discharge path without
+     fading or transforming the paths during the mower's turnaround. */
+  @keyframes headerGrassStream {
+    from { stroke-dashoffset: 26; }
+    to { stroke-dashoffset: 0; }
+  }
 
   /* ── Letter Tumble & Reassemble Animation when Mower Runs Over ──────── */
   .tumble-char {
