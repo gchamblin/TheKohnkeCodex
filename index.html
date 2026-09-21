@@ -191,8 +191,10 @@
   }
 
   .header-cruising-mower .grass-clipping {
-    animation: continuousHeaderGrassShoot 0.42s ease-out infinite;
-    will-change: transform, opacity;
+    opacity: 0.9;
+    transform: none;
+    animation: none;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
   }
   .header-cruising-mower .grass-1 { animation-delay: 0s; }
   .header-cruising-mower .grass-2 { animation-delay: 0.05s; }
@@ -201,28 +203,6 @@
   .header-cruising-mower .grass-5 { animation-delay: 0.20s; }
   .header-cruising-mower .grass-6 { animation-delay: 0.25s; }
   .header-cruising-mower .grass-7 { animation-delay: 0.30s; }
-
-  /* Keep a small overlap between clipping bursts so the stream does not
-     blink while the mower is rotating at either end of the track. */
-  @keyframes continuousHeaderGrassShoot {
-    0% {
-      opacity: 1;
-      transform: translate(0, 0) scale(0.6) rotate(0deg);
-    }
-    20% {
-      opacity: 1;
-    }
-    60% {
-      opacity: 0.95;
-      transform: translate(38px, 28px) scale(1.8) rotate(55deg);
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.7));
-    }
-    100% {
-      opacity: 1;
-      transform: translate(68px, 50px) scale(2.8) rotate(90deg);
-      filter: drop-shadow(0 10px 16px rgba(50, 215, 75, 0.8));
-    }
-  }
 
   /* ── Letter Tumble & Reassemble Animation when Mower Runs Over ──────── */
   .tumble-char {
