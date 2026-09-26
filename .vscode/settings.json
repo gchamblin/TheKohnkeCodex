@@ -18,5 +18,6 @@
     "code-explainer.streaming": true,
     "emmet.showSuggestionsAsSnippets": true,
     "npm-intellisense.scanDevDependencies": true,
-    "npm-intellisense.showBuildInLibs": false
+    "npm-intellisense.showBuildInLibs": false,
+    "editor.linkedEditing": true
 }
