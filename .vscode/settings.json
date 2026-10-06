@@ -8,7 +8,5 @@
     "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
     "editor.codeActions.triggerOnFocusChange": true,
     "emmet.showSuggestionsAsSnippets": true,
-    "npm-intellisense.scanDevDependencies": true,
-    "npm-intellisense.showBuildInLibs": false,
     "editor.linkedEditing": true
 }

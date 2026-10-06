@@ -1,0 +1,4103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cub Cadet Zero-Turn Command Hub | Kohnke Edition</title>
+    <style>
+      /* ── Modern Industrial Dark Theme System ────────────────────────────────── */
+      :root {
+        --bg-dark: #121316;
+        --bg-card: #1a1c23;
+        --bg-card-hover: #22252e;
+        --border-color: #2d313e;
+
+        --brand-yellow: #f5b800;
+        --brand-yellow-dim: rgba(245, 184, 0, 0.15);
+        --brand-red: #ff453a;
+        --brand-red-dim: rgba(255, 69, 58, 0.15);
+        --brand-green: #32d74b;
+        --brand-green-dim: rgba(50, 215, 75, 0.15);
+
+        --text-primary: #f2f4f8;
+        --text-secondary: #9d9fa9;
+        --text-muted: #626575;
+
+        --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-mono: "JetBrains Mono", monospace;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+        font-family: var(--font-sans);
+        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+        /* The header stays put
+       and the sidebar/content area below it (.app-container) becomes its
+       own fixed-height box so each side can scroll on its own. */
+        overflow: hidden;
+      }
+
+      /* ── Header & App Bar ────────────────────────────────────────────────── */
+      header {
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border-color);
+        padding: 16px 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        overflow: hidden;
+        min-height: 120px;
+      }
+
+      header::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(47, 32, 86, 0.18) 0%,
+          rgba(196, 75, 97, 0.3) 35%,
+          rgba(244, 115, 71, 0.58) 67%,
+          rgba(255, 182, 91, 0.82) 100%
+        );
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      header::after {
+        content: "";
+        position: absolute;
+        width: 112px;
+        height: 112px;
+        right: 23%;
+        bottom: -34px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 230, 178, 0.9) 0%,
+          rgba(255, 194, 132, 0.84) 43%,
+          rgba(255, 148, 107, 0.46) 66%,
+          rgba(255, 132, 96, 0) 78%
+        );
+        filter: blur(1px);
+        box-shadow: 0 0 34px 16px rgba(255, 136, 78, 0.24);
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      /* ── Desktop Full-Page Mowing Strip across Header ───────────────────── */
+      .header-mower-track {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .header-skyline {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 150%;
+        /* object-fit: cover; */
+        object-position: center bottom;
+        display: block;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.85;
+      }
+
+      .header-skyline2 {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 150%;
+        /* object-fit: cover; */
+        object-position: center bottom;
+        display: block;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.85;
+      }
+
+      /* 1. Tall, Overgrown Grass Blades (Ahead of the mower) */
+      .tall-grass-layer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 22px;
+        background-color: transparent;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='22' viewBox='0 0 36 22'%3E%3Cpath d='M0 22 L2 5 L4 22 L7 2 L10 22 L13 7 L16 22 L18 3 L21 22 L24 8 L27 22 L30 1 L33 22 L35 6 L36 22 Z' fill='%23194f19'/%3E%3Cpath d='M1 22 L3 9 L6 22 L9 4 L12 22 L15 10 L17 22 L20 6 L23 22 L26 9 L29 22 L32 3 L34 22 Z' fill='%23277727' opacity='0.9'/%3E%3Cpath d='M0 22 L2 12 L5 22 L8 8 L11 22 L14 13 L17 22 L19 7 L22 22 L25 11 L28 22 L31 6 L34 22 Z' fill='%2336a336' opacity='0.8'/%3E%3C/svg%3E");
+        background-repeat: repeat-x;
+        background-position: bottom left;
+        background-size: 36px 22px;
+        filter: drop-shadow(0 -1px 3px rgba(0, 0, 0, 0.4));
+        z-index: 3;
+      }
+
+      /* 2. Freshly cut turf revealed behind the mower */
+      .mowed-strip {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 18px;
+        background-color: #245d2a;
+        background-image:
+          linear-gradient(180deg, rgba(119, 164, 75, 0.16), rgba(16, 57, 25, 0.2)),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='18' viewBox='0 0 96 18'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M3 17q2-3 1-6m8 6q-1-3 2-5m8 5q2-3 1-7m9 7q-2-3 1-5m8 5q2-4 0-7m9 7q-1-3 2-5m8 5q2-3 1-6m9 6q-2-3 1-5m8 5q1-4-1-7m9 7q-1-3 2-5' stroke='%2385ad54' stroke-width='1' opacity='.55'/%3E%3Cpath d='M7 17q1-2 2-3m17 3q1-2 2-3m18 3q-1-2 1-3m17 3q1-2 2-3m17 3q-1-2 1-3' stroke='%23163f20' stroke-width='1' opacity='.55'/%3E%3C/g%3E%3C/svg%3E");
+        background-repeat: no-repeat, repeat-x;
+        background-size: 100% 100%, 96px 18px;
+        box-shadow: inset 0 3px 6px rgba(172, 205, 112, 0.1), inset 0 -3px 7px rgba(5, 25, 12, 0.2);
+        z-index: 2;
+      }
+
+      .zero-turn-mower-btn.header-cruising-mower {
+        position: absolute;
+        width: 180px;
+        height: 97.5px;
+        bottom: 1.5px;
+        left: -200px;
+        animation: cruiseAcrossHeader 18s linear infinite;
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.7));
+        overflow: visible !important;
+        z-index: 4;
+        cursor: pointer;
+        pointer-events: bounding-box;
+      }
+
+      .header-cruising-mower:hover {
+        filter: drop-shadow(0 0 14px var(--brand-yellow));
+        pointer-events: auto;
+        cursor: pointer;
+      }
+
+      .header-cruising-mower.zero-turning {
+        animation-play-state: paused;
+      }
+
+      .header-cruising-mower .mower-visual {
+        transform-box: fill-box;
+        transform-origin: center;
+      }
+
+      .header-cruising-mower.zero-turning .mower-visual {
+        animation: mowerSpin360 0.9s linear both;
+      }
+
+      .header-cruising-mower.zero-turning .grass-clipping {
+        animation-duration: 0.55s;
+      }
+
+      @keyframes mowerSpin360 {
+        0% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(90deg);
+        }
+        50% {
+          transform: rotate(180deg);
+        }
+        75% {
+          transform: rotate(270deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .clipping-impact-burst {
+        position: fixed;
+        inset: 0;
+        z-index: 20000;
+        overflow: hidden;
+        pointer-events: none;
+        perspective: 1000px;
+      }
+
+      .clipping-impact-burst::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at 50% 55%,
+          rgba(172, 255, 111, 0.2),
+          rgba(77, 178, 44, 0.1) 42%,
+          rgba(36, 100, 22, 0.5),
+          transparent 76%
+        );
+        animation: clippingScreenFlash 0.75s ease-out both;
+      }
+
+      .impact-clipping {
+        position: absolute;
+        left: var(--origin-x);
+        top: var(--origin-y);
+        width: var(--blade-width);
+        height: var(--blade-height);
+        border-radius: 100% 0 100% 0;
+        clip-path: polygon(0 50%, 42% 12%, 100% 0, 74% 48%, 100% 100%, 38% 82%);
+        transform-origin: 0 50%;
+        opacity: 0;
+        will-change: transform, opacity;
+        animation: clippingTowardViewer var(--flight-time) cubic-bezier(0.12, 0.67, 0.2, 1) var(--flight-delay) both;
+      }
+
+      @keyframes clippingTowardViewer {
+        0% {
+          opacity: 0;
+          transform: translate3d(0, 0, 0) rotate(var(--start-angle)) scale(0.12);
+        }
+        12% {
+          opacity: 1;
+        }
+        72% {
+          opacity: 1;
+          transform: translate3d(var(--travel-x), var(--travel-y), 340px) rotate(var(--mid-angle)) scale(var(--mid-scale));
+        }
+        100% {
+          opacity: 0;
+          transform: translate3d(var(--travel-x), var(--travel-y), 700px) rotate(var(--end-angle)) scale(var(--end-scale));
+        }
+      }
+
+      @keyframes clippingScreenFlash {
+        0% {
+          opacity: 0;
+        }
+        16% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .header-cruising-mower.zero-turning .mower-visual {
+          animation-duration: 0.9s;
+        }
+
+        .impact-clipping {
+          animation-duration: 0.4s;
+        }
+      }
+
+      /* Bi-directional full-screen cruising with 180° zero-turn flip at each end */
+      @keyframes cruiseAcrossHeader {
+        0% {
+          left: -200px;
+          transform: scale(1) rotate(0deg);
+        }
+        46% {
+          left: 100%;
+          transform: scale(1) rotate(0deg);
+        }
+        47.5% {
+          /* Clear the header before turning around. */
+          left: 100%;
+          transform: scale(1) rotate(0deg);
+        }
+        49% {
+          left: 100%;
+          transform: scale(1) rotate(0deg);
+        }
+        50% {
+          /* Turn around just off-screen and mow back into view. */
+          left: 100%;
+          transform: scaleX(-1) scaleY(1) rotate(0deg);
+        }
+        96% {
+          left: -200px;
+          transform: scaleX(-1) scaleY(1) rotate(0deg);
+        }
+        97.5% {
+          /* Hold at the left edge before changing direction. */
+          left: -210px;
+          transform: scaleX(-1) scaleY(1) rotate(0deg);
+        }
+        99% {
+          left: -200px;
+          transform: scaleX(-1) scaleY(1) rotate(0deg);
+        }
+        100% {
+          left: -200px;
+          transform: scale(1) rotate(0deg);
+        }
+      }
+
+      .header-cruising-mower .lap-bars {
+        transform-origin: 36px 28px;
+        transform: rotate(24deg);
+      }
+
+      .header-cruising-mower .grass-clipping {
+        opacity: 0.9;
+        animation: grassClippingBurst 0.9s ease-out infinite;
+        filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+      }
+      .header-cruising-mower .grass-1 {
+        animation-delay: 0s;
+      }
+      .header-cruising-mower .grass-2 {
+        animation-delay: 0.05s;
+      }
+      .header-cruising-mower .grass-3 {
+        animation-delay: 0.1s;
+      }
+      .header-cruising-mower .grass-4 {
+        animation-delay: 0.15s;
+      }
+      .header-cruising-mower .grass-5 {
+        animation-delay: 0.2s;
+      }
+      .header-cruising-mower .grass-6 {
+        animation-delay: 0.25s;
+      }
+      .header-cruising-mower .grass-7 {
+        animation-delay: 0.3s;
+      }
+
+      /* ── Letter Tumble & Reassemble Animation when Mower Runs Over ──────── */
+      .tumble-char {
+        display: inline-block;
+        position: relative;
+        transform-origin: bottom center;
+        transition:
+          transform 0.08s ease,
+          color 0.15s ease;
+        will-change: transform, opacity;
+      }
+
+      .tumble-space {
+        display: inline-block;
+        width: 0.3em;
+      }
+
+      .tumble-char.tumbled {
+        animation: letterTumbleReassemble 1.15s
+          cubic-bezier(0.22, 1.28, 0.36, 1) forwards;
+        z-index: 15;
+      }
+
+      @keyframes letterTumbleReassemble {
+        0% {
+          transform: translateY(0) rotate(0deg) scale(1);
+        }
+        16% {
+          /* Mower blade knocks letter off the line */
+          transform: translateY(20px) translateX(6px) rotate(42deg) scale(0.92);
+          color: #32d74b;
+          text-shadow: 0 0 10px rgba(50, 215, 75, 0.9);
+        }
+        36% {
+          /* Tumbles deeper down with spinning scatter */
+          transform: translateY(28px) translateX(12px) rotate(75deg) scale(0.85);
+          color: var(--brand-yellow);
+          text-shadow: 0 0 12px rgba(245, 184, 0, 0.85);
+          opacity: 0.9;
+        }
+        62% {
+          /* Bounces back upward past the line */
+          transform: translateY(-8px) translateX(-3px) rotate(-12deg) scale(1.1);
+          color: #fff;
+          text-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+          opacity: 1;
+        }
+        82% {
+          /* Settles into place */
+          transform: translateY(2px) translateX(1px) rotate(3deg) scale(0.98);
+          color: inherit;
+          text-shadow: none;
+        }
+        100% {
+          /* Perfectly reassembled on the line */
+          transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+          color: inherit;
+          text-shadow: none;
+        }
+      }
+
+      /* ── Mobile/Small Screen Mower Button ───────────────────────────── */
+      .nav-toggle-btn {
+        display: contents;
+        align-items: center;
+        background: var(--bg-dark);
+        border: 2px solid var(--brand-yellow);
+        border-radius: 12px;
+        padding: 6px 14px 6px 8px;
+        cursor: pointer;
+        position: relative;
+        overflow: visible;
+        gap: 10px;
+        box-shadow: 0 0 10px rgba(245, 184, 0, 0.25);
+        transition: all 0.3s ease;
+      }
+
+      .nav-toggle-btn:hover {
+        box-shadow: 0 0 18px rgba(245, 184, 0, 0.6);
+        border-color: #fff;
+      }
+
+      /* Mower SVG initial position on left side */
+      .zero-turn-mower-btn {
+        position: relative;
+        z-index: 3;
+        transform-origin: 45px 30px;
+        transition: transform 0.5s cubic-bezier(0.34, 1.3, 0.64, 1);
+        overflow: visible !important;
+      }
+
+      /* The Cub Cadet-styled "MENU" Badge placed in front of the mower */
+      .mower-menu-badge {
+        display: none;
+        background: var(--brand-yellow);
+        color: #000;
+        font-weight: 900;
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        border-radius: 4px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        position: relative;
+        z-index: 2;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        transition:
+          transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.3s ease,
+          filter 0.3s ease;
+      }
+
+      /* Lap bars push forward into drive position when hovering */
+      .nav-toggle-btn .lap-bars {
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transform-origin: 42px 34px;
+      }
+
+      .nav-toggle-btn:hover .lap-bars,
+      .nav-toggle-btn:active .lap-bars {
+        transform: rotate(28deg);
+      }
+
+      /* HOVER: Mower nudges forward toward the MENU badge */
+      .nav-toggle-btn:hover .zero-turn-mower-btn {
+        transform: translateX(18px);
+      }
+
+      /* CLICK / SPINNING DONUT: The Zero-Turn runs forward, spins a 360° donut circle over the MENU, and blasts grass! */
+      .nav-toggle-btn.spinning-donut .zero-turn-mower-btn {
+        animation: mowerDonutRun 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+          forwards;
+      }
+
+      @media (min-width: 901px) {
+        .nav-toggle-btn.spinning-donut .zero-turn-mower-btn,
+        .nav-toggle-btn.spinning-donut .mower-menu-badge {
+          animation: none;
+        }
+      }
+
+      @keyframes mowerDonutRun {
+        0% {
+          transform: translate(0, 0) rotate(0deg) scale(1);
+        }
+        30% {
+          transform: translate(55px, -6px) rotate(45deg) scale(1.12);
+        }
+        55% {
+          transform: translate(80px, 8px) rotate(190deg) scale(1.15);
+        }
+        80% {
+          transform: translate(25px, 12px) rotate(320deg) scale(1.05);
+        }
+        100% {
+          transform: translate(0, 0) rotate(360deg) scale(1);
+        }
+      }
+
+      .nav-toggle-btn.spinning-donut .mower-menu-badge {
+        animation: menuMowedEffect 0.95s ease forwards;
+      }
+
+      @keyframes menuMowedEffect {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        35% {
+          transform: scaleY(0.2) scaleX(1.1) translateY(12px);
+          opacity: 0.3;
+          filter: blur(1px);
+        }
+        55% {
+          transform: scaleY(0.5) scaleX(1.3) translateY(18px);
+          opacity: 0.4;
+          filter: blur(0.5px);
+        }
+        75% {
+          transform: scale(1.08);
+          opacity: 0.9;
+          filter: drop-shadow(0 0 10px #32d74b);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+          filter: none;
+        }
+      }
+
+      /* ── Small grass blades discharged from the chute ────────────────── */
+      @keyframes grassClippingBurst {
+        0% {
+          opacity: 0.95;
+          transform: translate(0, 0) rotate(-12deg) scale(0.55);
+        }
+        45% {
+          opacity: 1;
+          transform: translate(-38px, 20px) rotate(38deg) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-58px, 32px) rotate(90deg) scale(0.65);
+        }
+      }
+
+      .grass-clipping {
+        opacity: 0.9;
+        transform-box: fill-box;
+        transform-origin: center;
+        filter: drop-shadow(0 1px 1px rgba(5, 6, 7, 0.25));
+      }
+
+      /* When hovering, holding, or running the donut circle, grass streams continuously towards the user! */
+      .nav-toggle-btn:hover .grass-clipping,
+      .nav-toggle-btn:active .grass-clipping,
+      .nav-toggle-btn.mowing .grass-clipping,
+      .nav-toggle-btn.spinning-donut .grass-clipping {
+        animation: grassClippingBurst 0.8s ease-in-out infinite;
+      }
+
+      .nav-toggle-btn:hover .grass-1,
+      .nav-toggle-btn.spinning-donut .grass-1 {
+        animation-delay: 0s;
+      }
+      .nav-toggle-btn:hover .grass-2,
+      .nav-toggle-btn.spinning-donut .grass-2 {
+        animation-delay: 0.05s;
+      }
+      .nav-toggle-btn:hover .grass-3,
+      .nav-toggle-btn.spinning-donut .grass-3 {
+        animation-delay: 0.1s;
+      }
+      .nav-toggle-btn:hover .grass-4,
+      .nav-toggle-btn.spinning-donut .grass-4 {
+        animation-delay: 0.15s;
+      }
+      .nav-toggle-btn:hover .grass-5,
+      .nav-toggle-btn.spinning-donut .grass-5 {
+        animation-delay: 0.2s;
+      }
+      .nav-toggle-btn:hover .grass-6,
+      .nav-toggle-btn.spinning-donut .grass-6 {
+        animation-delay: 0.25s;
+      }
+      .nav-toggle-btn:hover .grass-7,
+      .nav-toggle-btn.spinning-donut .grass-7 {
+        animation-delay: 0.3s;
+      }
+
+      .zero-turn-mower-btn #engine-assembly {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: mowerEngineIdle 0.16s linear infinite;
+      }
+
+      .zero-turn-mower-btn #near-rear-wheel,
+      .zero-turn-mower-btn #far-rear-wheel,
+      .zero-turn-mower-btn #front-casters circle {
+        transform-box: fill-box;
+        transform-origin: center;
+      }
+
+      .nav-toggle-btn:hover .zero-turn-mower-btn #near-rear-wheel,
+      .nav-toggle-btn:hover .zero-turn-mower-btn #far-rear-wheel,
+      .nav-toggle-btn:hover .zero-turn-mower-btn #front-casters circle,
+      .nav-toggle-btn.mowing .zero-turn-mower-btn #near-rear-wheel,
+      .nav-toggle-btn.mowing .zero-turn-mower-btn #far-rear-wheel,
+      .nav-toggle-btn.mowing .zero-turn-mower-btn #front-casters circle,
+      .nav-toggle-btn.spinning-donut .zero-turn-mower-btn #near-rear-wheel,
+      .nav-toggle-btn.spinning-donut .zero-turn-mower-btn #far-rear-wheel,
+      .nav-toggle-btn.spinning-donut
+        .zero-turn-mower-btn
+        #front-casters
+        circle {
+        animation: mowerWheelRoll 0.35s linear infinite;
+      }
+
+      .header-cruising-mower #near-rear-wheel,
+      .header-cruising-mower #far-rear-wheel,
+      .header-cruising-mower #front-casters circle {
+        animation: mowerWheelRoll 0.65s linear infinite;
+      }
+
+      @keyframes mowerEngineIdle {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        25% {
+          transform: translate(0.25px, -0.2px);
+        }
+        50% {
+          transform: translate(-0.2px, 0.15px);
+        }
+        75% {
+          transform: translate(0.2px, 0.2px);
+        }
+      }
+
+      @keyframes mowerWheelRoll {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .zero-turn-mower-btn #engine-assembly,
+        .nav-toggle-btn:hover .zero-turn-mower-btn #near-rear-wheel,
+        .nav-toggle-btn:hover .zero-turn-mower-btn #far-rear-wheel,
+        .nav-toggle-btn:hover .zero-turn-mower-btn #front-casters circle,
+        .nav-toggle-btn.mowing .zero-turn-mower-btn #near-rear-wheel,
+        .nav-toggle-btn.mowing .zero-turn-mower-btn #far-rear-wheel,
+        .nav-toggle-btn.mowing .zero-turn-mower-btn #front-casters circle,
+        .nav-toggle-btn.spinning-donut .zero-turn-mower-btn #near-rear-wheel,
+        .nav-toggle-btn.spinning-donut .zero-turn-mower-btn #far-rear-wheel,
+        .nav-toggle-btn.spinning-donut
+          .zero-turn-mower-btn
+          #front-casters
+          circle {
+          animation: none;
+        }
+        .header-cruising-mower #near-rear-wheel,
+        .header-cruising-mower #far-rear-wheel,
+        .header-cruising-mower #front-casters circle {
+          animation: none;
+        }
+
+        .zero-turn-mower-btn.header-cruising-mower {
+          animation: none;
+          left: calc(50% - 60px);
+          transform: none;
+        }
+
+        .header-cruising-mower .grass-clipping {
+          animation: none;
+        }
+      }
+
+      .brand-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        margin: 0 auto;
+        position: static;
+      }
+
+      .brand-badge {
+        background: var(--brand-yellow);
+        color: #000;
+        font-weight: 900;
+        font-size: 0.85rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .brand-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 10;
+        text-shadow:
+          0 2px 10px rgba(0, 0, 0, 0.85),
+          0 0 4px rgba(0, 0, 0, 0.9);
+      }
+
+      .brand-subtitle {
+        color: #e2e4eb;
+        font-size: 0.85rem;
+        margin-top: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 10;
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+      }
+
+      .owner-chip {
+        background: rgba(18, 19, 22, 0.75);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: #f2f4f8;
+        position: absolute;
+        right: 32px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        transition:
+          background 0.3s ease,
+          border-color 0.3s ease,
+          box-shadow 0.3s ease;
+        will-change: transform;
+      }
+
+      .owner-chip span {
+        color: var(--brand-yellow);
+        font-weight: 600;
+      }
+
+      .owner-chip.jumping {
+        animation: ownerBadgeJump 1.15s cubic-bezier(0.18, 1.25, 0.3, 1)
+          forwards;
+        border-color: var(--brand-yellow);
+        box-shadow:
+          0 0 20px rgba(245, 184, 0, 0.85),
+          0 8px 24px rgba(0, 0, 0, 0.6);
+        background: rgba(245, 184, 0, 0.22);
+        color: #fff;
+      }
+
+      @keyframes ownerBadgeJump {
+        0% {
+          transform: translateY(-50%) scale(1) rotate(0deg);
+        }
+        22% {
+          /* Leap up and tilt startled away from incoming mower */
+          transform: translateY(-88px) scale(1.18) rotate(-16deg);
+        }
+        48% {
+          /* Hang at peak */
+          transform: translateY(-78px) scale(1.1) rotate(6deg);
+        }
+        75% {
+          /* Come down and bounce */
+          transform: translateY(-42px) scale(0.96) rotate(-2deg);
+        }
+        90% {
+          transform: translateY(-53px) scale(1.02) rotate(1deg);
+        }
+        100% {
+          /* Settle back onto the line */
+          transform: translateY(-50%) scale(1) rotate(0deg);
+        }
+      }
+
+      /* ── Universal Scrollbar Suppression (Hide All Scrollbars) ──────────── */
+      *,
+      html,
+      body,
+      .app-container,
+      aside,
+      main {
+        scrollbar-width: none !important; /* Firefox */
+        -ms-overflow-style: none !important; /* IE & Edge */
+      }
+
+      *::-webkit-scrollbar,
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar,
+      .app-container::-webkit-scrollbar,
+      aside::-webkit-scrollbar,
+      main::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        background: transparent !important;
+      }
+
+      /* ── Layout & Navigation ──────────────────────────────────────────────── */
+      .app-container {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        flex: 1;
+        /* Required so the grid children (aside/main) can actually shrink and
+       scroll inside this box instead of growing with their content. */
+        min-height: 0;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      aside {
+        background: var(--bg-card);
+        border-right: 1px solid var(--border-color);
+        padding: 24px 16px;
+        /* Sidebar scrolls independently from the page content, so its scroll
+       position never jumps when you switch tabs. */
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      aside::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+
+      .nav-menu {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        color: var(--text-secondary);
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .nav-item:hover {
+        background: var(--bg-card-hover);
+        color: var(--text-primary);
+      }
+
+      .nav-item.active {
+        background: var(--brand-yellow-dim);
+        color: var(--brand-yellow);
+        border-left: 3px solid var(--brand-yellow);
+      }
+
+      main {
+        padding: 32px;
+        max-width: 1200px;
+        /* This is the box that actually scrolls when reading a tab's content.
+       Because it scrolls on its own (separate from <aside>), switching
+       tabs can reset just this scrollbar back to the top — see the
+       switchTab() function in the <script> block below. */
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        scroll-behavior: smooth;
+        height: 100%;
+      }
+
+      main::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      /* ── Dashboard Cards & Grid ──────────────────────────────────────────── */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+
+      @media (max-width: 900px) {
+        header {
+          padding: 12px 16px;
+          justify-content: space-between;
+          min-height: auto;
+        }
+        .header-mower-track {
+          display: none !important;
+        }
+        .nav-toggle-btn {
+          display: inline-flex;
+        }
+        .mower-menu-badge {
+          display: inline-block;
+        }
+        .zero-turn-mower-btn.header-cruising-mower {
+          position: relative;
+          width: 120px;
+          height: 65px;
+          left: auto;
+          bottom: auto;
+          animation: none;
+          filter: none;
+          transform: none;
+        }
+        .header-cruising-mower #near-rear-wheel,
+        .header-cruising-mower #far-rear-wheel,
+        .header-cruising-mower #front-casters circle,
+        .header-cruising-mower .grass-clipping {
+          animation: none;
+        }
+        .owner-chip {
+          display: none;
+        }
+        .brand-group {
+          flex-direction: row;
+          align-items: center;
+          text-align: left;
+          margin: 0;
+          gap: 12px;
+          z-index: 13;
+        }
+        .brand-title {
+          position: relative;
+          font-size: 1.1rem;
+          justify-content: flex-start;
+          z-index: 10;
+        }
+        .brand-subtitle {
+          font-size: 0.75rem;
+          justify-content: flex-start;
+          z-index: 10;
+          position: relative;
+        }
+        .app-container {
+          grid-template-columns: 1fr;
+          position: relative;
+        }
+        aside {
+          display: none;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: min(320px, 100%);
+          max-height: calc(100vh - 75px);
+          z-index: 90;
+          background: rgba(26, 28, 35, 0.98);
+          backdrop-filter: blur(12px);
+          border-right: 2px solid var(--border-color);
+          border-bottom: 3px solid var(--brand-yellow);
+          border-radius: 0 0 16px 0;
+          box-shadow:
+            0 16px 36px rgba(0, 0, 0, 0.85),
+            0 0 20px rgba(245, 184, 0, 0.25);
+          transform-origin: top left;
+        }
+        aside.mobile-open {
+          display: block;
+          animation: spewDownNav 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+            forwards;
+        }
+        .grid-2,
+        .grid-3,
+        .grid-4 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ── Spew-Down Chute Grass Discharge Animation ────────────────────────── */
+      @keyframes spewDownNav {
+        0% {
+          opacity: 0;
+          transform: translateY(-20px) scale(0.92);
+          clip-path: circle(10% at 70px 0%);
+        }
+        50% {
+          opacity: 1;
+          clip-path: circle(70% at 70px 20%);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+          clip-path: circle(150% at 70px 20%);
+        }
+      }
+
+      @keyframes grassChuteAssemble {
+        0% {
+          opacity: 0;
+          transform: translate(45px, -75px) scale(0.25) rotate(28deg);
+          background: rgba(50, 215, 75, 0.4);
+          border-color: #32d74b;
+          color: #32d74b;
+          filter: blur(2px) drop-shadow(0 0 18px rgba(50, 215, 75, 0.9));
+        }
+        45% {
+          opacity: 1;
+          transform: translate(18px, -12px) scale(1.06) rotate(-5deg);
+          background: rgba(50, 215, 75, 0.2);
+          border-color: var(--brand-yellow);
+          filter: blur(0) drop-shadow(0 0 10px rgba(245, 184, 0, 0.6));
+        }
+        75% {
+          transform: translate(-3px, 4px) scale(0.98) rotate(1.5deg);
+        }
+        100% {
+          opacity: 1;
+          transform: translate(0, 0) scale(1) rotate(0deg);
+          filter: none;
+        }
+      }
+
+      aside.mobile-open .nav-item {
+        animation: grassChuteAssemble 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      aside.mobile-open .nav-item:nth-child(1) {
+        animation-delay: 0.04s;
+      }
+      aside.mobile-open .nav-item:nth-child(2) {
+        animation-delay: 0.08s;
+      }
+      aside.mobile-open .nav-item:nth-child(3) {
+        animation-delay: 0.12s;
+      }
+      aside.mobile-open .nav-item:nth-child(4) {
+        animation-delay: 0.16s;
+      }
+      aside.mobile-open .nav-item:nth-child(5) {
+        animation-delay: 0.2s;
+      }
+      aside.mobile-open .nav-item:nth-child(6) {
+        animation-delay: 0.24s;
+      }
+      aside.mobile-open .nav-item:nth-child(7) {
+        animation-delay: 0.28s;
+      }
+      aside.mobile-open .nav-item:nth-child(8) {
+        animation-delay: 0.32s;
+      }
+      aside.mobile-open .nav-item:nth-child(9) {
+        animation-delay: 0.36s;
+      }
+      aside.mobile-open .nav-item:nth-child(10) {
+        animation-delay: 0.4s;
+      }
+      aside.mobile-open .nav-item:nth-child(11) {
+        animation-delay: 0.44s;
+      }
+      aside.mobile-open .nav-item:nth-child(12) {
+        animation-delay: 0.48s;
+      }
+
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+
+      .john-note-card {
+        position: relative;
+        border: 2px solid #59616d;
+        background:
+          radial-gradient(
+            circle at 18px 18px,
+            #c4c9cf 0 3px,
+            #343a43 4px 7px,
+            transparent 8px
+          ),
+          radial-gradient(
+            circle at calc(100% - 18px) 18px,
+            #c4c9cf 0 3px,
+            #343a43 4px 7px,
+            transparent 8px
+          ),
+          radial-gradient(
+            circle at 18px calc(100% - 18px),
+            #c4c9cf 0 3px,
+            #343a43 4px 7px,
+            transparent 8px
+          ),
+          radial-gradient(
+            circle at calc(100% - 18px) calc(100% - 18px),
+            #c4c9cf 0 3px,
+            #343a43 4px 7px,
+            transparent 8px
+          ),
+          repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.025) 0 1px,
+            transparent 1px 4px
+          ),
+          linear-gradient(145deg, #343a43 0%, #1f242c 42%, #111419 100%);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.18),
+          inset 0 -3px 0 rgba(0, 0, 0, 0.45),
+          0 0 0 5px #111419,
+          0 0 0 7px #59616d,
+          0 18px 34px rgba(0, 0, 0, 0.44);
+      }
+
+      .john-note-card::before,
+      .john-note-card::after {
+        content: "";
+        position: absolute;
+        pointer-events: none;
+        border: 1px solid rgba(245, 184, 0, 0.48);
+      }
+
+      .john-note-card::before {
+        inset: 9px;
+        border-radius: 8px;
+      }
+
+      .john-note-card::after {
+        inset: 14px;
+        border-color: rgba(255, 255, 255, 0.14);
+        border-radius: 6px;
+      }
+
+      .john-note-card .card-header {
+        position: relative;
+        z-index: 1;
+        margin: -4px -4px 24px;
+        padding: 12px 18px;
+        border: 1px solid #6c737d;
+        background:
+          repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.035) 0 2px,
+            transparent 2px 7px
+          ),
+          linear-gradient(180deg, #303640, #171a20);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.14),
+          inset 0 -2px 0 rgba(0, 0, 0, 0.42);
+      }
+
+      .john-note-card .card-title {
+        color: #e4e7eb;
+        font-family: var(--font-mono);
+        font-size: 0.92rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .john-note-card .status-tag {
+        border-color: #f5b800;
+        color: #f5b800;
+        background: rgba(245, 184, 0, 0.08);
+        font-family: var(--font-mono);
+        letter-spacing: 0.08em;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* ── Spec Metric Widgets ─────────────────────────────────────────────── */
+      .metric-box {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border-color);
+        padding: 16px;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .metric-value {
+        font-family: var(--font-mono);
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--brand-yellow);
+        margin-top: 4px;
+      }
+
+      .metric-label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* ── Data Tables ─────────────────────────────────────────────────────── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 0.9rem;
+      }
+
+      .data-table th {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 12px 16px;
+        color: var(--text-secondary);
+        font-weight: 600;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .data-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .data-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .status-tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        font-family: var(--font-mono);
+      }
+
+      .tag-yellow {
+        background: var(--brand-yellow-dim);
+        color: var(--brand-yellow);
+      }
+      .tag-green {
+        background: var(--brand-green-dim);
+        color: var(--brand-green);
+      }
+      .tag-red {
+        background: var(--brand-red-dim);
+        color: var(--brand-red);
+      }
+
+      /* ── History Timeline (added for the IH / Cub Cadet history page) ────
+     Simple vertical timeline: a colored line down the left side (.timeline),
+     with each event (.timeline-item) as a card that has a little dot
+     (::before on .timeline-year) marking its spot on the line.
+     To add a new event, just copy one .timeline-item block below in the
+     HTML and change the year/title/text.                                 */
+      .timeline {
+        position: relative;
+        padding-left: 28px;
+        border-left: 3px solid var(--border-color);
+        margin: 20px 0;
+      }
+
+      .timeline-item {
+        position: relative;
+        margin-bottom: 28px;
+      }
+
+      .timeline-item:last-child {
+        margin-bottom: 0;
+      }
+
+      /* the little dot marking the event on the vertical line */
+      .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -34px;
+        top: 4px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--brand-yellow);
+        border: 3px solid var(--bg-dark);
+      }
+
+      .timeline-year {
+        display: inline-block;
+        font-family: var(--font-mono);
+        font-weight: 700;
+        color: var(--brand-yellow);
+        background: var(--brand-yellow-dim);
+        padding: 2px 10px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+      }
+
+      .timeline-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 6px;
+      }
+
+      .timeline-text {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+
+      /* ── Author / Credit Footer Block ─────────────────────────────────────
+     Small "who built this" card shown at the very bottom of the page.    */
+      .author-block {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 20px;
+        margin-top: 20px;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        background: var(--bg-card);
+      }
+
+      .author-photo {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--brand-yellow);
+        flex-shrink: 0;
+      }
+
+      .author-name {
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .author-role {
+        font-size: 0.85rem;
+        color: var(--brand-yellow);
+        font-weight: 600;
+      }
+
+      .author-tagline {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: 4px;
+      }
+
+      /* ── Interactive Tools & Calculator ─────────────────────────────────── */
+      .calc-input {
+        background: var(--bg-dark);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 10px 14px;
+        border-radius: 6px;
+        width: 100%;
+        font-family: var(--font-mono);
+        margin-top: 6px;
+      }
+
+      .btn {
+        background: var(--brand-yellow);
+        color: #000;
+        font-weight: 700;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .btn:hover {
+        background: #d49f00;
+      }
+
+      /* ── Custom Callouts & Quotes ────────────────────────────────────────── */
+      .field-note {
+        border-left: 3px solid var(--brand-yellow);
+        background: rgba(255, 255, 255, 0.02);
+        padding: 16px;
+        border-radius: 0 8px 8px 0;
+        margin: 16px 0;
+        font-style: italic;
+        color: var(--text-secondary);
+      }
+
+      .field-note.red {
+        border-color: var(--brand-red);
+      }
+      .field-note.green {
+        border-color: var(--brand-green);
+      }
+
+      .field-note strong {
+        color: var(--text-primary);
+        font-style: normal;
+      }
+
+      .john-note {
+        position: relative;
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 34px 42px 38px;
+        border: 1px solid rgba(245, 184, 0, 0.72);
+        border-radius: 12px;
+        background:
+          radial-gradient(
+            circle at 92% 8%,
+            rgba(255, 201, 91, 0.2) 0 7%,
+            transparent 24%
+          ),
+          linear-gradient(
+            145deg,
+            rgba(18, 93, 108, 0.28),
+            rgba(245, 184, 0, 0.07) 48%,
+            rgba(236, 112, 69, 0.16)
+          );
+        box-shadow:
+          inset 0 0 0 5px rgba(18, 93, 108, 0.22),
+          inset 0 0 0 7px rgba(245, 184, 0, 0.12),
+          0 12px 28px rgba(0, 0, 0, 0.24);
+        color: var(--text-secondary);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.05rem;
+        line-height: 1.8;
+      }
+
+      .john-note::before,
+      .john-note::after {
+        content: "";
+        position: absolute;
+        left: 18px;
+        right: 18px;
+        height: 3px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #168c91, #f5b800 48%, #ee754d);
+        opacity: 0.85;
+      }
+
+      .john-note::before {
+        top: 14px;
+      }
+      .john-note::after {
+        bottom: 14px;
+      }
+
+      .john-note-banner {
+        margin: 0 auto 24px;
+        color: #f5b800;
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .john-note-machine-plate {
+        position: relative;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 16px;
+        margin: -2px auto 26px;
+        padding: 12px 18px;
+        border: 1px solid #555b68;
+        border-radius: 5px;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 35%),
+          repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.025) 0 1px,
+            transparent 1px 3px
+          ),
+          #242832;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.12),
+          inset 0 -2px 0 rgba(0, 0, 0, 0.35),
+          0 5px 12px rgba(0, 0, 0, 0.28);
+        color: #d4d8df;
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .john-note-machine-plate::before,
+      .john-note-machine-plate::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 9px;
+        height: 9px;
+        margin-top: -5px;
+        border: 2px solid #777e8c;
+        border-radius: 50%;
+        background: #17191f;
+        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+      }
+
+      .john-note-machine-plate::before {
+        left: 6px;
+      }
+      .john-note-machine-plate::after {
+        right: 6px;
+      }
+
+      .john-note-gear {
+        width: 30px;
+        height: 30px;
+        border: 7px dotted #aeb4bf;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          #252a33 0 26%,
+          #8d949f 27% 35%,
+          #252a33 36% 100%
+        );
+        box-shadow:
+          0 0 0 1px #101217,
+          0 0 0 3px rgba(245, 184, 0, 0.22);
+        animation: johnNoteGearTurn 14s linear infinite;
+      }
+
+      .john-note-machine-specs {
+        display: flex;
+        justify-content: center;
+        gap: 18px;
+        color: #f5b800;
+        white-space: nowrap;
+      }
+
+      .john-note-machine-specs span {
+        color: #d4d8df;
+      }
+
+      .john-note-machine-specs strong {
+        color: #f5b800;
+        font-weight: 700;
+      }
+
+      .john-note-plate-mark {
+        color: #ee754d;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      @keyframes johnNoteGearTurn {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .john-note p {
+        margin-bottom: 18px;
+      }
+
+      .john-note strong {
+        color: var(--text-primary);
+      }
+
+      .img-frame {
+        width: 100%;
+        max-height: 380px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        /* "contain" shows the whole photo (no cropping); background fills the
+       letterbox gaps so it still looks intentional, not just floating. */
+        object-fit: contain;
+        background: rgba(0, 0, 0, 0.25);
+        margin-top: 12px;
+      }
+
+      /* ── Photo Gallery ("Kohnke Moments") ──────────────────────────────────
+     Simple responsive grid of photo cards. To add a new photo:
+       1. Drop the image file into images/
+       2. Copy one .gallery-item block in the HTML and point its <img> src
+          at the new file, then change the caption text.
+  */
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+      }
+
+      .gallery-item {
+        background: var(--bg-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .gallery-item img {
+        width: 100%;
+        height: 220px;
+        object-fit: contain;
+        background: rgba(0, 0, 0, 0.35);
+        display: block;
+      }
+
+      .gallery-caption {
+        padding: 12px 14px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+
+      .gallery-caption strong {
+        display: block;
+        color: var(--brand-yellow);
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+      }
+
+      /* ── Back to Top Button ────────────────────────────────────────────────
+     Floating round button, bottom-right corner. Hidden until you scroll
+     down a bit (toggled by the "show" class in the scroll listener at the
+     bottom of the <script> block). Click scrolls smoothly to the top.    */
+      #backToTopBtn {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--brand-yellow);
+        color: #000;
+        border: none;
+        font-size: 1.3rem;
+        font-weight: 900;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease,
+          visibility 0.2s;
+        z-index: 200;
+      }
+
+      #backToTopBtn.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      #backToTopBtn:hover {
+        background: #d49f00;
+      }
+
+      .disclaimer {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid var(--border-color);
+        padding: 16px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        text-align: center;
+        margin-top: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <!-- Background Desktop Full-Page Mowing Animation Track -->
+      <!-- <div class="header-mower-track" aria-hidden="true"> -->
+      <img
+        src="images/realistic-green-grass-blue-sky_107791-19290.avif"
+        class="header-skyline"
+        alt="florida sky"
+      />
+      <div class="tall-grass-layer"></div>
+      <div class="mowed-strip"></div>
+      <div class="brand-group">
+        <button
+          class="nav-toggle-btn"
+          id="navToggleBtn"
+          onclick="toggleMobileNav()"
+          title="Desktop: click for a zero-turn clipping blast. Mobile: toggle navigation."
+          aria-label="Mower: spray clippings; on mobile, toggle navigation"
+        >
+          <svg
+            class="zero-turn-mower-btn header-cruising-mower"
+            viewBox="0 0 120 65"
+            width="120"
+            height="65"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <!-- Yellow Metallic Gradient -->
+              <linearGradient id="cubYellow" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#FFD633" />
+                <stop offset="40%" stop-color="#F5B800" />
+                <stop offset="100%" stop-color="#C69200" />
+              </linearGradient>
+
+              <!-- Dark Metal / Deck Gradient -->
+              <linearGradient id="deckDark" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#404552" />
+                <stop offset="50%" stop-color="#232731" />
+                <stop offset="100%" stop-color="#14171F" />
+              </linearGradient>
+
+              <!-- Rubber Tire Gradient -->
+              <radialGradient id="tireRubber" cx="40%" cy="40%" r="60%">
+                <stop offset="0%" stop-color="#3A3D45" />
+                <stop offset="70%" stop-color="#1A1C21" />
+                <stop offset="100%" stop-color="#0B0C0E" />
+              </radialGradient>
+
+              <!-- Chrome / Steel Gradient -->
+              <linearGradient
+                id="metalSteel"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="100%"
+              >
+                <stop offset="0%" stop-color="#E0E2E5" />
+                <stop offset="50%" stop-color="#8A909A" />
+                <stop offset="100%" stop-color="#4B5058" />
+              </linearGradient>
+
+              <!-- Tire Tread Pattern -->
+              <pattern
+                id="rearTread"
+                width="4"
+                height="4"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="M 0 2 L 4 2 M 2 0 L 2 4"
+                  stroke="#111"
+                  stroke-width="0.8"
+                />
+              </pattern>
+            </defs>
+
+            <!-- Ground Contact Shadow -->
+            <ellipse
+              cx="58"
+              cy="56"
+              rx="46"
+              ry="4"
+              fill="#000"
+              opacity="0.35"
+            />
+
+            <g class="mower-visual">
+            <!-- 1. ROPS (Roll-Over Protection Frame) - Rear Background Layer -->
+            <path
+              d="M 24 45 L 24 12 C 24 8 28 5 34 5 C 40 5 42 8 42 14 L 42 30"
+              fill="none"
+              stroke="#22252A"
+              stroke-width="3"
+              stroke-linecap="round"
+            />
+            <path
+              d="M 25 12 C 25 9 29 6 34 6"
+              fill="none"
+              stroke="#4F5560"
+              stroke-width="1"
+              opacity="0.6"
+            />
+
+            <!-- 2. Far-Side Rear Drive Wheel (Depth Layer) -->
+            <g id="far-rear-wheel">
+              <circle cx="24" cy="42" r="10.5" fill="url(#tireRubber)" />
+              <circle
+                cx="24"
+                cy="42"
+                r="6"
+                fill="#1C1E24"
+                stroke="#A0A5B0"
+                stroke-width="0.5"
+              />
+            </g>
+
+            <!-- 3. Engine Block & Exhaust Cover -->
+            <g id="engine-assembly">
+              <rect
+                x="18"
+                y="28"
+                width="18"
+                height="13"
+                rx="2"
+                fill="#181A20"
+                stroke="#333"
+                stroke-width="1"
+              />
+              <rect
+                x="20"
+                y="23"
+                width="12"
+                height="6"
+                rx="1.5"
+                fill="#2B2E36"
+                stroke="#444"
+                stroke-width="0.8"
+              />
+              <!-- Heat Shield Vents -->
+              <line
+                x1="22"
+                y1="31"
+                x2="32"
+                y2="31"
+                stroke="#3A3E48"
+                stroke-width="1"
+              />
+              <line
+                x1="22"
+                y1="34"
+                x2="32"
+                y2="34"
+                stroke="#3A3E48"
+                stroke-width="1"
+              />
+              <line
+                x1="22"
+                y1="37"
+                x2="32"
+                y2="37"
+                stroke="#3A3E48"
+                stroke-width="1"
+              />
+              <!-- Exhaust Tip -->
+              <path
+                d="M 18 32 L 14 31 L 14 34 L 18 34 Z"
+                fill="url(#metalSteel)"
+              />
+            </g>
+
+            <!-- 4. High-Back Operator Seat with Ergonomic Contour -->
+            <g id="operator-seat" class="operator-seat">
+              <!-- Seat Cushion Back -->
+              <path
+                d="M 29 36 L 29 18 C 29 15 35 15 36 18 L 37 36 Z"
+                fill="#1A1C22"
+                stroke="#333"
+                stroke-width="1"
+              />
+              <!-- Backrest Inner Cushion Contour -->
+              <path
+                d="M 31 20 L 31 33"
+                stroke="url(#cubYellow)"
+                stroke-width="1.2"
+                opacity="0.8"
+              />
+              <!-- Seat Base Bottom -->
+              <path
+                d="M 28 36 L 44 36 C 45 36 46 38 44 40 L 30 40 Z"
+                fill="#252830"
+                stroke="#111"
+                stroke-width="1"
+              />
+              <!-- Armrest -->
+              <path
+                d="M 32 27 L 41 27 L 41 31"
+                fill="none"
+                stroke="#111"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </g>
+
+            <!-- 5. Main Chassis Frame & Footrest Deck -->
+            <g id="main-body">
+              <!-- Lower Frame Support Bar -->
+              <path d="M 22 43 L 74 43 L 78 38 L 40 38 Z" fill="#181A1F" />
+              <!-- Body Hood Panel -->
+              <path
+                d="M 32 37 L 48 37 L 58 28 L 70 28 L 68 38 L 32 38 Z"
+                fill="url(#cubYellow)"
+                stroke="#A67B00"
+                stroke-width="0.8"
+              />
+              <!-- Brand Stripe Highlight -->
+              <path
+                d="M 49 35 L 57 29 L 68 29 L 66 35 Z"
+                fill="#1A1C22"
+                opacity="0.85"
+              />
+              <!-- Footrest Plate -->
+              <path
+                d="M 62 38 L 78 38 L 74 44 L 60 44 Z"
+                fill="#2D313B"
+                stroke="#1A1C22"
+                stroke-width="0.8"
+              />
+            </g>
+
+            <!-- 6. Mower Deck & Side Discharge Chute -->
+            <g id="mower-deck" class="mower-deck">
+              <!-- Heavy-Duty Fabricated Cutting Deck -->
+              <path
+                d="M 28 48 L 78 48 L 75 42 L 32 42 Z"
+                fill="url(#deckDark)"
+                stroke="url(#cubYellow)"
+                stroke-width="1.2"
+              />
+              <rect
+                x="35"
+                y="44"
+                width="38"
+                height="2"
+                fill="#FFD633"
+                opacity="0.6"
+              />
+              <!-- Anti-Scalp Deck Wheel -->
+              <circle
+                cx="74"
+                cy="49"
+                r="2.5"
+                fill="#111"
+                stroke="#555"
+                stroke-width="0.5"
+              />
+              <!-- Rubber Discharge Chute Shield -->
+              <path
+                d="M 48 44 L 60 45 C 61 47 59 50 57 50 L 46 48 Z"
+                fill="#111215"
+                stroke="#2B2E36"
+                stroke-width="1"
+              />
+            </g>
+
+            <!-- 7. Near-Side Rear Drive Wheel (Large & Textured) -->
+            <g id="near-rear-wheel">
+              <circle
+                cx="28"
+                cy="43"
+                r="12.5"
+                fill="url(#tireRubber)"
+                stroke="#090A0C"
+                stroke-width="1.5"
+              />
+              <!-- Tread Overlay -->
+              <circle
+                cx="28"
+                cy="43"
+                r="12.5"
+                fill="url(#rearTread)"
+                opacity="0.25"
+              />
+              <!-- Rim & Hub -->
+              <circle
+                cx="28"
+                cy="43"
+                r="7.5"
+                fill="url(#cubYellow)"
+                stroke="#8A6700"
+                stroke-width="1"
+              />
+              <circle cx="28" cy="43" r="3" fill="#181A20" />
+              <!-- Lug Nuts -->
+              <circle cx="28" cy="41" r="0.7" fill="#FFF" opacity="0.9" />
+              <circle cx="30" cy="43" r="0.7" fill="#FFF" opacity="0.9" />
+              <circle cx="28" cy="45" r="0.7" fill="#FFF" opacity="0.9" />
+              <circle cx="26" cy="43" r="0.7" fill="#FFF" opacity="0.9" />
+            </g>
+
+            <!-- 8. Front Swivel Caster Wheels & Fork Assemblies -->
+            <g id="front-casters">
+              <!-- Far-Side Front Caster -->
+              <path
+                d="M 72 38 L 72 44 L 70 47"
+                fill="none"
+                stroke="url(#metalSteel)"
+                stroke-width="1.8"
+              />
+              <circle cx="69" cy="48" r="4" fill="url(#tireRubber)" />
+
+              <!-- Near-Side Front Caster Bracket Fork -->
+              <path
+                d="M 80 38 L 80 43 L 75 48"
+                fill="none"
+                stroke="#222"
+                stroke-width="2.5"
+              />
+              <path
+                d="M 80 38 L 80 43 L 75 48"
+                fill="none"
+                stroke="url(#metalSteel)"
+                stroke-width="1.5"
+              />
+              <!-- Near-Side Caster Wheel -->
+              <circle
+                cx="75"
+                cy="50"
+                r="5"
+                fill="url(#tireRubber)"
+                stroke="#0B0C0E"
+                stroke-width="1"
+              />
+              <circle cx="75" cy="50" r="2" fill="url(#metalSteel)" />
+              <circle cx="75" cy="50" r="0.8" fill="#111" />
+            </g>
+
+            <!-- 9. Steering Lap Control Levers -->
+            <g id="lap-bars" class="lap-bars">
+              <!-- Left Control Lever -->
+              <path
+                d="M 42 34 L 42 16 L 49 16"
+                fill="none"
+                stroke="#15171C"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              />
+              <path
+                d="M 42 34 L 42 16 L 49 16"
+                fill="none"
+                stroke="url(#cubYellow)"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+              <rect
+                x="47"
+                y="14"
+                width="7"
+                height="4"
+                rx="1"
+                fill="#0D0E11"
+                stroke="#333"
+                stroke-width="0.5"
+              />
+
+              <!-- Right Control Lever -->
+              <path
+                d="M 39 34 L 39 19 L 46 19"
+                fill="none"
+                stroke="#111"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <path
+                d="M 39 34 L 39 19 L 46 19"
+                fill="none"
+                stroke="#B88A00"
+                stroke-width="1.2"
+                stroke-linecap="round"
+              />
+              <rect
+                x="44"
+                y="17"
+                width="6"
+                height="3.5"
+                rx="1"
+                fill="#181A20"
+              />
+            </g>
+
+            <!-- 10. Dynamic Grass Clipping Particles -->
+            <g id="grass-discharge" class="grass-particles">
+              <path
+                class="grass-clipping grass-1"
+                d="M 59 47 Q 64 43 70 42 Q 65 47 59 48 Z"
+                fill="#58E36B"
+                stroke="#197A29"
+                stroke-width="0.4"
+              />
+              <path
+                class="grass-clipping grass-2"
+                d="M 58 48 Q 65 46 74 47 Q 66 50 58 49 Z"
+                fill="#2DBB43"
+                stroke="#145B20"
+                stroke-width="0.4"
+              />
+              <path
+                class="grass-clipping grass-3"
+                d="M 59 46 Q 66 41 73 39 Q 67 45 59 47 Z"
+                fill="#9AF5A5"
+                stroke="#258C35"
+                stroke-width="0.4"
+              />
+              <path
+                class="grass-clipping grass-4"
+                d="M 57 49 Q 64 51 72 52 Q 67 53 57 50 Z"
+                fill="#209B30"
+                stroke="#0E5119"
+                stroke-width="0.4"
+              />
+              <path
+                class="grass-clipping grass-5"
+                d="M 59 45 Q 68 40 76 38 Q 69 43 59 46 Z"
+                fill="#D0FF4A"
+                stroke="#4D8F17"
+                stroke-width="0.4"
+              />
+              <path
+                class="grass-clipping grass-6"
+                d="M 58 47 Q 67 47 75 48 Q 68 50 58 48 Z"
+                fill="#75E586"
+                stroke="#187A28"
+                stroke-width="0.4"
+              />
+              <path
+                class="grass-clipping grass-7"
+                d="M 59 46 Q 65 42 71 40 Q 66 44 59 47 Z"
+                fill="#32D74B"
+                stroke="#126A20"
+                stroke-width="0.4"
+              />
+            </g>
+            </g>
+          </svg>
+
+          <!-- "MENU" Badge placed directly in front of the mower -->
+          <span class="mower-menu-badge">MENU</span>
+        </button>
+        <div>
+          <div class="brand-title" id="brandTitle">
+            Zero-Turn Incident Command Hub
+          </div>
+          <div class="brand-subtitle" id="brandSubtitle">
+            Model 17BIEAEE010 · 42" S-Span Deck · 21.5 HP Kohler Engine
+          </div>
+        </div>
+      </div>
+      <div class="owner-chip">Operator: <span>John Kohnke</span></div>
+    </header>
+
+    <div class="app-container">
+      <!-- Sidebar Navigation -->
+      <aside>
+        <ul class="nav-menu">
+          <li class="nav-item active" onclick="switchTab('overview', this)">
+            <span>⚡</span> Command &amp; Specs
+          </li>
+          <li class="nav-item" onclick="switchTab('john-note', this)">
+            <span>✉</span> A Note for John
+          </li>
+          <li class="nav-item" onclick="switchTab('quickref', this)">
+            <span>📋</span> Quick Reference
+          </li>
+          <li class="nav-item" onclick="switchTab('breakin', this)">
+            <span>⏱</span> Break-In Checklist
+          </li>
+          <li class="nav-item" onclick="switchTab('maintenance', this)">
+            <span>🛠</span> Master Maintenance
+          </li>
+          <li class="nav-item" onclick="switchTab('care', this)">
+            <span>🧼</span> Care &amp; Operating Tips
+          </li>
+          <li class="nav-item" onclick="switchTab('calendar', this)">
+            <span>📅</span> FL Mowing Calendar
+          </li>
+          <li class="nav-item" onclick="switchTab('troubleshooting', this)">
+            <span>🔍</span> Diagnostics &amp; Mistakes
+          </li>
+          <li class="nav-item" onclick="switchTab('staugustine', this)">
+            <span>🌱</span> St. Augustine &amp; Heritage
+          </li>
+          <!-- Added 9/10: History Timeline tab, built from MostSoughtAfterIH.docx
+             and cubCadetHistory_FunFacts.docx plus extra web research -->
+          <li class="nav-item" onclick="switchTab('history', this)">
+            <span>🕰️</span> History Timeline
+          </li>
+          <!-- Added 9/10: Photo gallery of "Kohnke Moments" -->
+          <li class="nav-item" onclick="switchTab('gallery', this)">
+            <span>📸</span> Kohnke Moments
+          </li>
+          <li class="nav-item" onclick="switchTab('notes', this)">
+            <span>📝</span> Field Notes &amp; Lore
+          </li>
+          <!-- Added 9/9: pulled in from the 9/7 Desktop draft, this tab did not exist before -->
+          <li class="nav-item" onclick="switchTab('disclaimers', this)">
+            <span>🚜</span> Rookie Disclaimers
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Main Content Panel -->
+      <main>
+        <!-- TAB 1: COMMAND & SPECS -->
+        <div id="overview" class="tab-content active">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Program Overview</div>
+              <span class="status-tag tag-green">OPERATIONAL</span>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 20px">
+              Official Cathy-mandated zero-turn program commissioned for John
+              Kohnke after epic lawn turns. This command hub integrates
+              maintenance tracking, yard calculators, and operational field
+              notes.
+            </p>
+            <div class="grid-4">
+              <div class="metric-box">
+                <div class="metric-label">Model Number</div>
+                <div class="metric-value">17BIEAEE010</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-label">Engine Power</div>
+                <div class="metric-value">21.5 HP</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-label">Deck Width</div>
+                <div class="metric-value">42" S-Span</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-label">Purchase Date</div>
+                <div class="metric-value">August 2026</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <!-- Hardware Specs Table -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Technical Specifications</div>
+              </div>
+              <table class="data-table">
+                <tbody>
+                  <tr>
+                    <td><strong>Engine Type</strong></td>
+                    <td>Kohler 21.5 HP — air-cooled, single-cylinder</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Drive System</strong></td>
+                    <td>Sealed hydrostatic</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Oil Spec</strong></td>
+                    <td>SAE 10W-30 (5 hr break-in, then every 50 hrs)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Spark Plug</strong></td>
+                    <td>KM-BR4ES</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tire Pressures</strong></td>
+                    <td>Rear: 10–12 PSI | Front: 14 PSI</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Battery</strong></td>
+                    <td>12V Lawn Tractor Battery</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Purchase Price</strong></td>
+                    <td>$3,599.99</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- First Lap Photo & Calc -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">John's First Lap</div>
+              </div>
+              <img
+                src="images/johns-first-lap.png"
+                alt="John Kohnke riding his Cub Cadet zero-turn mower"
+                class="img-frame"
+              />
+              <p
+                style="
+                  font-size: 0.85rem;
+                  color: var(--text-secondary);
+                  margin-top: 8px;
+                  text-align: center;
+                "
+              >
+                John Kohnke takes his brand-new Cub Cadet zero-turn for its
+                first lap — price tag still swinging.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: A NOTE FOR JOHN -->
+        <div id="john-note" class="tab-content">
+          <div class="card john-note-card">
+            <div class="card-header">
+              <div class="card-title">A Note for John</div>
+              <span class="status-tag">PERSONAL</span>
+            </div>
+
+            <div class="john-note">
+              <div
+                class="john-note-machine-plate"
+                aria-label="Mower engine specification plate"
+              >
+                <span class="john-note-gear" aria-hidden="true"></span>
+                <div class="john-note-machine-specs">
+                  <strong>KOHLER 21.5 HP</strong>
+                  <span>42&quot; S-SPAN DECK</span>
+                </div>
+                <span class="john-note-plate-mark">KOHNKE EDITION</span>
+              </div>
+              <div class="john-note-banner">Florida Summer Edition · 2026</div>
+              <p>
+                John, listen — you’re no rookie. You’ve been fixing things,
+                lifting things, dragging things, and occasionally cussing at
+                things for as long as I’ve known you. You’ve probably already
+                figured out half of what’s in this manual just by staring at the
+                mower with your hands on your hips. The other half you’d
+                eventually discover by accident, probably while muttering,
+                <em>“Huh… didn’t know it did that.”</em>
+              </p>
+
+              <p>
+                But I wanted to put something real together for you anyway. Not
+                because you needed it — let’s be honest, you’d survive — but
+                because you deserved it.
+              </p>
+
+              <p>
+                And me? I’m a guy who loves this stuff way more than any normal
+                person should. I’ve spent so many hours thinking about turf that
+                the grass has started waving at me when I walk by — sometimes
+                politely, sometimes sarcastically.
+              </p>
+
+              <p>
+                I’ve trimmed edges so perfect that geometry teachers wept. I’ve
+                battled weeds that had the confidence of a raccoon in a Waffle
+                House parking lot. I’ve argued with gates, fences, sprinklers,
+                and one extremely disrespectful patch of Bermuda that still owes
+                me money.
+              </p>
+
+              <p>So consider this your official welcome to the club.</p>
+
+              <p>
+                Membership dues include sweat, sunscreen, and at least one
+                heated argument with a gate that <em>“should’ve been open.”</em>
+              </p>
+
+              <p>
+                The initiation ritual involves at least one moment where you
+                scream
+                <strong>“WHO DESIGNED THIS?!”</strong>
+                at a bolt that has been minding its business since 1998.
+              </p>
+
+              <p>
+                Everything in this manual was built from scratch for you — your
+                mower, your yard, your situation. Written by someone who cares
+                about doing it right the first time… and who has absolutely
+                yelled at a weed before.
+              </p>
+
+              <p style="margin-bottom: 0">
+                <strong
+                  >Welcome to the club, John. Now let’s get to work.</strong
+                >
+              </p>
+
+              <div style="text-align: right; margin-top: 20px">
+                <strong>— Gary Chamblin</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: QUICK REFERENCE -->
+        <div id="quickref" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Quick Reference Guide</div>
+            </div>
+            <div class="field-note">
+              <strong>John Moment:</strong> John, if you only read one section
+              of this system, make it this one.
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Interval</th>
+                  <th>Task</th>
+                  <th>John's Tip</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="status-tag tag-yellow">Every Mow</span></td>
+                  <td>Check oil level</td>
+                  <td>Takes 10 seconds. Do it.</td>
+                </tr>
+                <tr>
+                  <td><span class="status-tag tag-yellow">Every Mow</span></td>
+                  <td>Blow off engine &amp; deck</td>
+                  <td>Grass on the hydro fan = overheating.</td>
+                </tr>
+                <tr>
+                  <td><span class="status-tag tag-yellow">Every Mow</span></td>
+                  <td>Inspect blades visually</td>
+                  <td>Look for bends, chips, or dullness.</td>
+                </tr>
+                <tr>
+                  <td><span class="status-tag tag-yellow">Every Mow</span></td>
+                  <td>Check tire pressure</td>
+                  <td>Uneven pressure = uneven cut.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="status-tag tag-green">Every 25 Hrs</span>
+                  </td>
+                  <td>Grease all fittings</td>
+                  <td>Front axle, steering sector, spindles.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="status-tag tag-green">Every 25 Hrs</span>
+                  </td>
+                  <td>Inspect deck belt</td>
+                  <td>Look for glazing, cracking, fraying.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="status-tag tag-green">Every 25 Hrs</span>
+                  </td>
+                  <td>Clean deck underside</td>
+                  <td>Scrape off grass buildup to prevent rust.</td>
+                </tr>
+                <tr>
+                  <td><span class="status-tag tag-red">Every 50 Hrs</span></td>
+                  <td>Change oil + filter</td>
+                  <td>SAE 10W-30, drain when warm.</td>
+                </tr>
+                <tr>
+                  <td><span class="status-tag tag-red">Every 50 Hrs</span></td>
+                  <td>Sharpen/replace blades</td>
+                  <td>Dull blades tear grass, invite disease.</td>
+                </tr>
+                <tr>
+                  <td><span class="status-tag tag-red">Every 50 Hrs</span></td>
+                  <td>Replace air filter</td>
+                  <td>Hold to light — can't see through it? Replace it.</td>
+                </tr>
+                <tr>
+                  <td><span class="status-tag tag-red">Seasonal</span></td>
+                  <td>Replace fuel filter</td>
+                  <td>Cheap insurance against fuel system issues.</td>
+                </tr>
+                <tr>
+                  <td><span class="status-tag tag-red">Seasonal</span></td>
+                  <td>Replace spark plug</td>
+                  <td>KM-BR4ES — easy swap, big difference.</td>
+                </tr>
+                <tr>
+                  <td><span class="status-tag tag-red">Seasonal</span></td>
+                  <td>Full hardware inspection</td>
+                  <td>Tighten everything you can reach.</td>
+                </tr>
+                <tr>
+                  <td><span class="status-tag tag-red">Seasonal</span></td>
+                  <td>Battery check</td>
+                  <td>Load-test before storing for off-season.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 3: BREAK-IN CHECKLIST -->
+        <div id="breakin" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Break-In Checklist (First 5 Hours)</div>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 16px">
+              The first 5 hours set the tone for the engine's entire life.
+              Follow this protocol exactly.
+            </p>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px">Done</th>
+                  <th>Phase</th>
+                  <th>Required Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" class="task-check" /></td>
+                  <td><strong>Before Start</strong></td>
+                  <td>
+                    Check oil (SAE 10W-30), verify fresh fuel, set rear tires
+                    (10-12 PSI), tighten all loose bolts.
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="task-check" /></td>
+                  <td><strong>First 15 Mins</strong></td>
+                  <td>
+                    Run at half throttle for initial 15 minutes. Avoid full-load
+                    heavy mowing.
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="task-check" /></td>
+                  <td><strong>Hours 1–5</strong></td>
+                  <td>
+                    Mow lightly. Inspect for oil or fuel leaks after every pass.
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="task-check" /></td>
+                  <td><strong>At 5 Hours (MANDATORY)</strong></td>
+                  <td>
+                    Change engine oil immediately to flush metal wear particles.
+                    Re-torque deck bolts, inspect belt tension, grease zerks.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="field-note red" style="margin-top: 16px">
+              <strong>⚠ CAUTION:</strong> Do NOT skip the 5-hour break-in oil
+              change. Leaving initial wear particles in the crankcase
+              accelerates engine wear.
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: MASTER MAINTENANCE TRACKER -->
+        <div id="maintenance" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Master Maintenance Schedule Tracker</div>
+              <button class="btn" onclick="resetCheckboxes()">
+                Reset Checklists
+              </button>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px">Done</th>
+                  <th>Interval</th>
+                  <th>Maintenance Item</th>
+                  <th>Action Required</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" class="task-check" /></td>
+                  <td><span class="status-tag tag-yellow">Every Mow</span></td>
+                  <td>Oil Dipstick Check</td>
+                  <td>Pull dipstick, wipe, reinsert. Takes 10 seconds.</td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="task-check" /></td>
+                  <td><span class="status-tag tag-yellow">Every Mow</span></td>
+                  <td>Debris Blowout</td>
+                  <td>
+                    Use leaf blower on engine &amp; deck. Grass on hydro fans
+                    causes catastrophic overheating.
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="task-check" /></td>
+                  <td><span class="status-tag tag-yellow">Every Mow</span></td>
+                  <td>Blade &amp; Pressure Check</td>
+                  <td>
+                    Inspect for blade bends/dullness. Rears: 10–12 PSI, Fronts:
+                    14 PSI.
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="task-check" /></td>
+                  <td>
+                    <span class="status-tag tag-green">Every 25 Hrs</span>
+                  </td>
+                  <td>Chassis Lubrication</td>
+                  <td>
+                    Grease front axle pivot, steering sector gear, and spindle
+                    zerks with multi-purpose grease.
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="task-check" /></td>
+                  <td>
+                    <span class="status-tag tag-green">Every 25 Hrs</span>
+                  </td>
+                  <td>Belt &amp; Deck Scraping</td>
+                  <td>
+                    Inspect deck belt for glazing/cracking. Scrape grass buildup
+                    from deck underside to stop rust.
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="task-check" /></td>
+                  <td><span class="status-tag tag-red">Every 50 Hrs</span></td>
+                  <td>Oil &amp; Filter Service</td>
+                  <td>
+                    SAE 10W-30. Drain warm. Replace filter every other oil
+                    change minimum.
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="task-check" /></td>
+                  <td><span class="status-tag tag-red">Every 50 Hrs</span></td>
+                  <td>Blade Sharpening &amp; Air Filter</td>
+                  <td>
+                    Sharpen blades. Replace paper filter element if opaque when
+                    held to light.
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="task-check" /></td>
+                  <td><span class="status-tag tag-red">Every Season</span></td>
+                  <td>Fuel Filter &amp; Spark Plug</td>
+                  <td>
+                    Replace inline fuel filter ($5) and KM-BR4ES spark plug ($4)
+                    for fast starting.
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="task-check" /></td>
+                  <td><span class="status-tag tag-red">Every Season</span></td>
+                  <td>Hardware Inspection &amp; Battery</td>
+                  <td>
+                    Tighten all deck &amp; frame bolts. Load-test battery before
+                    storing for off-season.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 5: CARE & OPERATING TIPS -->
+        <div id="care" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                Cleaning, Care &amp; Pro Operating Tips
+              </div>
+            </div>
+            <div class="grid-2">
+              <div>
+                <h3 style="color: var(--brand-yellow); margin-bottom: 12px">
+                  Cleaning &amp; Care Rules
+                </h3>
+                <ul
+                  style="
+                    list-style: none;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    font-size: 0.9rem;
+                    color: var(--text-secondary);
+                  "
+                >
+                  <li>
+                    • <strong>Blow Off Post-Mow:</strong> Use leaf blower or
+                    compressed air. Never pressure wash spindles (destroys
+                    grease seals).
+                  </li>
+                  <li>
+                    • <strong>Hydro Fan Maintenance:</strong> Keep clear in FL
+                    heat. Scrape deck underside while clippings are fresh.
+                  </li>
+                  <li>
+                    • <strong>Fuel Care:</strong> Use fresh unleaded every 30
+                    days. Add Sta-Bil fuel stabilizer if sitting &gt;30 days.
+                  </li>
+                  <li>
+                    • <strong>Storage &amp; UV Protection:</strong> Store
+                    covered in shed/tarp. Wipe vinyl seat with UV protectant
+                    against FL sun.
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 style="color: var(--brand-yellow); margin-bottom: 12px">
+                  Hard-Won Operating Rules
+                </h3>
+                <ul
+                  style="
+                    list-style: none;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    font-size: 0.9rem;
+                    color: var(--text-secondary);
+                  "
+                >
+                  <li>
+                    • <strong>Sharp Blades &amp; Dry Grass:</strong> Sharpen
+                    every 50 hrs. Never mow wet grass (causes clumping and deep
+                    ruts).
+                  </li>
+                  <li>
+                    • <strong>The 1/3 Rule:</strong> Never cut off more than 1/3
+                    of grass blade height in one pass to avoid stressing turf.
+                  </li>
+                  <li>
+                    • <strong>Alternate Patterns:</strong> Change mowing
+                    directions weekly to prevent severe soil compaction and
+                    ruts.
+                  </li>
+                  <li>
+                    • <strong>Vibration Warning:</strong> Excessive shaking =
+                    bent blade or loose spindle. Shut off immediately!
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="field-note green" style="margin-top: 20px">
+              <strong>Did You Know?</strong> Clippings are 80-85% water. Dried
+              clippings trap moisture against metal like concrete, accelerating
+              deck rust. Scrape weekly!
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 6: FLORIDA CALENDAR -->
+        <div id="calendar" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Florida St. Augustine Mowing Rhythm</div>
+            </div>
+            <div class="field-note">
+              <strong>John Moment:</strong> In Ohio, winter buries mowers in
+              snow. In Florida, winter just gives you a weekend off. Enjoy it —
+              spring comes fast!
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Frequency</th>
+                  <th>Cut Height</th>
+                  <th>Fertilize?</th>
+                  <th>Seasonal Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Jan – Feb</td>
+                  <td>Every 3–4 wks</td>
+                  <td>3.5–4"</td>
+                  <td>No</td>
+                  <td>Dormant season. Mow only if needed.</td>
+                </tr>
+                <tr>
+                  <td>March</td>
+                  <td>Every 2–3 wks</td>
+                  <td>3.5–4"</td>
+                  <td>No</td>
+                  <td>Grass waking up. Watch for spring weeds.</td>
+                </tr>
+                <tr>
+                  <td>April</td>
+                  <td>Weekly</td>
+                  <td>3.5–4"</td>
+                  <td>Yes (Slow-rel)</td>
+                  <td>First fertilizer application of the year.</td>
+                </tr>
+                <tr>
+                  <td>May – Jun</td>
+                  <td>Weekly</td>
+                  <td>3.5–4"</td>
+                  <td>Yes (June)</td>
+                  <td>Peak growth season. Mow consistently.</td>
+                </tr>
+                <tr>
+                  <td>July – Aug</td>
+                  <td>Weekly</td>
+                  <td>4"</td>
+                  <td>No</td>
+                  <td>Heat stress. Raise deck to 4". Mow at 7 AM.</td>
+                </tr>
+                <tr>
+                  <td>September</td>
+                  <td>Weekly</td>
+                  <td>3.5–4"</td>
+                  <td>Yes (Light)</td>
+                  <td>Still growing. Final fertilizer window.</td>
+                </tr>
+                <tr>
+                  <td>October</td>
+                  <td>Every 2 wks</td>
+                  <td>3.5"</td>
+                  <td>No</td>
+                  <td>Growth slowing down. Reduce frequency.</td>
+                </tr>
+                <tr>
+                  <td>Nov – Dec</td>
+                  <td>Every 3–4 wks</td>
+                  <td>3.5"</td>
+                  <td>No</td>
+                  <td>Near-dormant. Minimal mowing needed.</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="field-note red" style="margin-top: 16px">
+              <strong>⚠ CAUTION:</strong> Never mow at 2 PM in Florida
+              mid-summer heat. Stresses both the operator and the Kohler engine.
+              Mow early morning!
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 7: TROUBLESHOOTING & MISTAKES -->
+        <div id="troubleshooting" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Interactive Diagnostic Tool</div>
+            </div>
+            <select
+              id="diagSelect"
+              class="calc-input"
+              onchange="runDiagnostic()"
+              style="margin-bottom: 20px"
+            >
+              <option value="">-- Select Symptom to Diagnose --</option>
+              <option value="start">Won't Start</option>
+              <option value="cut">Uneven Cut / Striping Issues</option>
+              <option value="vibrate">Excessive Machine Vibration</option>
+              <option value="pull">Pulls to One Side</option>
+              <option value="overheat">Engine Overheating</option>
+              <option value="smoke">Smoke or Battery Dying</option>
+            </select>
+            <div id="diagResult" class="field-note" style="display: none"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Hall of Fame Mistakes — Avoid These!</div>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Incident</th>
+                  <th>Lesson Learned</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>The Stale Fuel Incident</strong></td>
+                  <td>
+                    Left fuel all winter without stabilizer. Cleaned carb for 3
+                    hours in Feb. <em>Always use Sta-Bil.</em>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Pressure Washer Mistake</strong></td>
+                  <td>
+                    Blasted spindles to get clean. Destroyed two sealed bearings
+                    ($180 fix). <em>Use air only!</em>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Skipped 5-Hour Oil Change</strong></td>
+                  <td>
+                    "Seemed fine" so oil wasn't changed. Accelerated engine
+                    wear. <em>Flush break-in oil!</em>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>The Wet Grass Decision</strong></td>
+                  <td>
+                    Mowed after a rainstorm. Clogged deck solid and left deep
+                    ruts. <em>Wait for dry grass!</em>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 8: ST. AUGUSTINE & HERITAGE -->
+        <div id="staugustine" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">St. Augustine Grass Management</div>
+            </div>
+            <ul
+              style="
+                list-style: none;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+              "
+            >
+              <li>
+                • <strong>Cutting Rules:</strong> Maintain height at 3.5–4
+                inches (never below 3"). Never cut off &gt;1/3 height. Raise
+                deck to 4" in July/Aug heat to shade root system.
+              </li>
+              <li>
+                • <strong>Watering &amp; Feeding:</strong> 1 inch/week early
+                morning (before 10 AM). Fertilize April, June, and Sept only.
+                Never fertilize Oct–March.
+              </li>
+              <li>
+                • <strong>Pests &amp; Fungus:</strong> Watch for Chinch bugs in
+                dry brown patches. Brown patch fungus comes from evening
+                watering — keep watering to mornings!
+              </li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                History &amp; Heritage: 60+ Years of Quality
+              </div>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 12px">
+              Cub Cadet started in 1961 built alongside International Harvester
+              farm equipment. They were overbuilt by people who made machines to
+              plow fields, not just clip grass. That farmer DNA remains today:
+              heavy steel, simple drivetrains, and repairable components.
+            </p>
+            <p style="color: var(--text-secondary)">
+              So when you fire up that Kohler engine, you’re continuing an
+              American tradition that started long before either of us argued
+              with gates. You're working with a machine built to show up, cut
+              right, and survive.
+            </p>
+            <div
+              class="field-note green"
+              style="text-align: center; margin-top: 16px"
+            >
+              <strong>Ride on, John. You're part of the heritage now.</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 9: FIELD NOTES & LORE -->
+        <div id="notes" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">A Note Before You Begin</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Field Notes &amp; Zero-Turn Zingers</div>
+            </div>
+
+            <div class="grid-2">
+              <div class="field-note red">
+                <strong>Zero-Turn Driving School:</strong><br />
+                Step 1: Start mower. Step 2: Tear up lawn like escaping police.
+                Step 3: Cathy arrives. Step 4: Regret.
+              </div>
+              <div class="field-note">
+                <strong>Academy Motto:</strong><br />
+                "Precision is optional; survivability is mandatory. We don't
+                teach straight lines — we teach: ‘I didn't hit the garden,
+                Cathy, I expanded the lawn.’"
+              </div>
+              <div class="field-note green">
+                <strong>Incident Report:</strong><br />
+                Cause: Operator enthusiasm | Damage: Lawn integrity compromised
+                | Witness: Cathy | Status: Husband in danger
+              </div>
+              <div class="field-note red">
+                <strong>When Cathy Pulls In:</strong><br />
+                "John can manage wildland fires and statewide disaster
+                coordination… but he still can’t coordinate a clean turn in
+                front of the house."
+              </div>
+            </div>
+
+            <!-- NEW ADDITIONS INTEGRATED INTO ZINGERS & RHYMES -->
+            <div style="margin-top: 24px">
+              <h3 style="color: var(--brand-yellow); margin-bottom: 16px">
+                The Mower’s Remorse
+              </h3>
+              <div class="field-note red">
+                He mastered wildland fires and tactical ops,<br />
+                But the moment he turns, a turf chunk drops.<br />
+                Now he’s staring at ruts where the lawn used to grow,<br />
+                Praying Cathy believes it’s a high-tech aero-mow.
+              </div>
+            </div>
+
+            <div style="margin-top: 24px">
+              <h3 style="color: var(--brand-yellow); margin-bottom: 16px">
+                The Kohler Engine Ballad
+              </h3>
+              <div class="field-note">
+                He can coordinate a multi-agency hurricane response with zero
+                panic,<br />
+                Map out evacuations and direct heavy fleet mechanics,<br />
+                But the second that 21.5 HP Kohler roars to life in the yard,<br />
+                He steers into the birdbath and blames it on the guard.<br /><br />
+                Cathy steps onto the porch, coffee mug in hand:<br />
+                <em
+                  >"John, you just turned our front yard into Normandy Beach
+                  sand."</em
+                >
+              </div>
+            </div>
+
+            <div style="margin-top: 24px">
+              <h3 style="color: var(--brand-yellow); margin-bottom: 16px">
+                Puns to Keep You in the Good Graces
+              </h3>
+              <ul
+                style="
+                  list-style: none;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 10px;
+                  font-size: 0.9rem;
+                  color: var(--text-secondary);
+                "
+              >
+                <li>
+                  • <strong>Shear Panic:</strong> The exact emotion when you
+                  hear her car turn down the driveway.
+                </li>
+                <li>
+                  • <strong>Blade of Glory:</strong> What you aimed for before
+                  you created a crop circle in the St. Augustine.
+                </li>
+                <li>
+                  • <strong>Grounds for Divorce:</strong> What happens when
+                  "zero-turn" becomes "zero-lawn."
+                </li>
+                <li>
+                  • <strong>De-turf Defense:</strong> "I didn't destroy the
+                  grass, Cathy—I just gave it a high-speed haircut."
+                </li>
+              </ul>
+            </div>
+
+            <div style="margin-top: 24px">
+              <h3 style="color: var(--brand-yellow); margin-bottom: 16px">
+                The Operator Quirks
+              </h3>
+              <ul
+                style="
+                  list-style: none;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 10px;
+                  font-size: 0.9rem;
+                  color: var(--text-secondary);
+                "
+              >
+                <li>
+                  • <strong>The "Cathy Check":</strong> Looking at the driveway
+                  every 45 seconds instead of looking at the grass in front of
+                  you.
+                </li>
+                <li>
+                  • <strong>The Tactical Teardrop:</strong> Doing a 15-foot wide
+                  arc to make a simple 90-degree turn just so the rear tires
+                  don't leave a burn mark.
+                </li>
+                <li>
+                  • <strong>Post-Mow Crime Scene Cleanup:</strong> Sweeping the
+                  runaway dirt back into the ruts with your boots before the
+                  garage door opens.
+                </li>
+              </ul>
+            </div>
+
+            <div style="margin-top: 24px">
+              <h3 style="color: var(--brand-yellow); margin-bottom: 16px">
+                Florida Heat &amp; Domestic Intelligence
+              </h3>
+              <div class="grid-2">
+                <div class="field-note green">
+                  <strong>The 7:00 AM Sneak Mow:</strong><br />
+                  John claims morning mowing "prevents heat stress on the St.
+                  Augustine." Cathy knows the truth: it’s the only time slot
+                  where she’s too tired to come outside and stop him from
+                  drifting around the AC unit.
+                </div>
+                <div class="field-note red">
+                  <strong>Tactical Camouflage:</strong><br />
+                  Pushing fresh grass clippings over the bare dirt patches with
+                  a leaf blower like a dog trying to cover up a hole in the
+                  carpet before anyone notices.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--
+        TAB: HISTORY TIMELINE (added 9/10)
+        Built from two source docs the user provided:
+          - MostSoughtAfterIH.docx (rare/collectible IH Cub Cadet models)
+          - cubCadetHistory_FunFacts.docx (brand history + fun facts)
+        plus a few extra dates confirmed via web research (marked below).
+        To add a new event: copy a <div class="timeline-item"> block and
+        change the year/title/text. To add a new collector model, copy a
+        row in the "Most Sought-After Models" table below.
+      -->
+        <div id="history" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                Cub Cadet &amp; International Harvester — The Full Story
+              </div>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 12px">
+              Every Cub Cadet, including John's, traces back to a Louisville,
+              Kentucky factory floor in 1960. Here's the timeline from "why does
+              IH make a tiny tractor" to the zero-turn sitting in the garage
+              today.
+            </p>
+
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-year">1960</div>
+                <div class="timeline-title">
+                  A Premium Idea at International Harvester
+                </div>
+                <div class="timeline-text">
+                  International Harvester (IH), already famous for Farmall farm
+                  tractors, greenlights a new line of small, heavy-duty lawn
+                  &amp; garden tractors out of its Louisville, KY plant — aimed
+                  at suburban homeowners who wanted "real tractor" durability,
+                  not a toy mower.
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-year">1961</div>
+                <div class="timeline-title">The Original Cub Cadet</div>
+                <div class="timeline-text">
+                  The first Cub Cadet (Model 100 / "Original") ships with a 7-hp
+                  Kohler engine and a cast-iron rear end and drive shaft
+                  borrowed straight from IH's full-size Farmall Cub tractor.
+                  Early units with round fenders and cast-iron reduction
+                  housings are now the most prized collector pieces of the whole
+                  line.
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-year">1963</div>
+                <div class="timeline-title">Shaft-Drive Arrives</div>
+                <div class="timeline-text">
+                  IH introduces its first shaft-drive Cub Cadet model, improving
+                  reliability over the early belt-driven setups — another step
+                  toward "built like a farm tractor."
+                </div>
+              </div>
+
+              <div
+                class="timeline-year-note field-note"
+                style="margin: 0 0 16px 0"
+              >
+                <strong>Why Yellow &amp; White?</strong> IH deliberately chose
+                yellow-and-white for Cub Cadet instead of "Farmall Red," so the
+                little homeowner tractors would never be confused with its
+                commercial farm equipment lineup.
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-year">1966</div>
+                <div class="timeline-title">Hydrostatic Drive Pioneer</div>
+                <div class="timeline-text">
+                  The Model 123 becomes the first garden tractor on the market
+                  with a hydrostatic transmission — no clutch, no gears, just
+                  push a pedal. This is the direct ancestor of the clutchless
+                  hydro drive still used in John's zero-turn today.
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-year">1971–1980</div>
+                <div class="timeline-title">
+                  The Wide-Frame &amp; Quietline Era
+                </div>
+                <div class="timeline-text">
+                  IH rolls out its best-loved workhorse models: the 149
+                  (wide-frame, hydraulic deck lift), the 1650 Quietline
+                  (rubber-isolated engine mounts to cut vibration/noise), and in
+                  1974 the ultra-rare Model 169 — only ~4,000 built in a 5-month
+                  run, packing the highest horsepower single-cylinder engine IH
+                  ever put in a garden tractor.
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-year">1976</div>
+                <div class="timeline-title">
+                  The "Spirit of '76" Bicentennial Special
+                </div>
+                <div class="timeline-text">
+                  A limited commemorative model built for the U.S. Bicentennial
+                  — white paint, red/blue decals, and star graphics. Unrestored
+                  originals are among the most valuable Cub Cadets a collector
+                  can find today.
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-year">1979–1981</div>
+                <div class="timeline-title">
+                  The Red-and-Black Era &amp; the "Super Garden Tractor"
+                </div>
+                <div class="timeline-text">
+                  Model 782 introduces the iconic red-and-black IH color scheme
+                  with twin-cylinder power. The Model 982 follows as the
+                  original "Super Garden Tractor" — a stretched frame with power
+                  steering and a true 3-point hitch, aimed at users who wanted a
+                  mini farm tractor, not just a mower.
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-year">1981</div>
+                <div class="timeline-title">Sold to MTD</div>
+                <div class="timeline-text">
+                  Financial trouble forces International Harvester to sell the
+                  Cub Cadet division to MTD (Modern Tool &amp; Die), which forms
+                  the Cub Cadet Corporation and shifts manufacturing to
+                  Brownsville, Tennessee. This ends the 20-year "IH era" that
+                  vintage collectors chase today.
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-year">1990s–2000s</div>
+                <div class="timeline-title">Zero-Turn Innovation</div>
+                <div class="timeline-text">
+                  Cub Cadet pushes hard into residential and commercial
+                  zero-turn mowers, eventually launching its Z-Series (1997) and
+                  pioneering steering-wheel-controlled, 4-wheel-steer zero-turns
+                  (Synchro-Steer) so operators could handle steep hills without
+                  dual lap bars — the same basic zero-turn concept John drives
+                  today, minus the "aero-mow" excuses.
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-year">2021</div>
+                <div class="timeline-title">
+                  Stanley Black &amp; Decker Takes Full Ownership
+                </div>
+                <div class="timeline-text">
+                  Stanley Black &amp; Decker acquires full ownership of MTD,
+                  bringing Cub Cadet under the same corporate roof as DeWalt and
+                  Craftsman.
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-year">2026</div>
+                <div class="timeline-title">John Kohnke Joins the Story</div>
+                <div class="timeline-text">
+                  John buys his own Cub Cadet zero-turn (model 17BIEAEE010, 21.5
+                  HP) and — after a few enthusiastic Synchro-Steer moments in
+                  front of Cathy — earns his place in Cub Cadet lore.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Collector reference table pulled from MostSoughtAfterIH.docx -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                Most Sought-After Vintage IH Cub Cadet Models
+              </div>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 12px">
+              For fun/reference only — not John's model. These are the IH-era
+              (1961–1981) tractors collectors chase hardest, split into rare
+              "holy grails" and tough daily-use workhorses.
+            </p>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Years</th>
+                  <th>Engine / Drive</th>
+                  <th>Why Collectors Want It</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Original (Model 100)</strong></td>
+                  <td>1961–1963</td>
+                  <td>7-hp Kohler</td>
+                  <td>
+                    The tractor that started it all — early round-fender units
+                    are the holy grail.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>149</strong></td>
+                  <td>1971–1974</td>
+                  <td>14-hp Kohler K321 / Hydro</td>
+                  <td>
+                    Widely considered IH's best all-around Cub Cadet — hydraulic
+                    deck lift, wide frame.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>169</strong></td>
+                  <td>1974</td>
+                  <td>16-hp Kohler K341</td>
+                  <td>
+                    Only ~4,000 made in a 5-month run — highest-hp
+                    single-cylinder IH ever built.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>800</strong></td>
+                  <td>1974–1980</td>
+                  <td>8-hp / Gear-drive</td>
+                  <td>
+                    Lowest-production regular IH model (~2,000 made) — sold
+                    poorly, now rare.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>1650 Quietline</strong></td>
+                  <td>1974–1980</td>
+                  <td>16-hp Kohler K341 / Hydro</td>
+                  <td>
+                    Top-of-the-line Quietline — rubber-isolated engine mounts,
+                    quieter running.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>"Spirit of '76"</strong></td>
+                  <td>1976</td>
+                  <td>Bicentennial Special</td>
+                  <td>
+                    Rare commemorative paint scheme — a big premium item for
+                    collectors.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>782</strong></td>
+                  <td>1979–1981</td>
+                  <td>17-hp Kohler KT17 Twin / Hydro</td>
+                  <td>
+                    First to wear the iconic red-and-black IH color scheme.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>982</strong></td>
+                  <td>1979–1981</td>
+                  <td>19-hp Onan B48G Twin / Hydro</td>
+                  <td>
+                    The original "Super Garden Tractor" — power steering, true
+                    3-point hitch.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="field-note green" style="margin-top: 16px">
+              <strong>Fun Fact:</strong> Vintage IH-era Cub Cadets (1960–1981)
+              still have a huge collector following today — dedicated rallies,
+              tractor pulls, and plow days happen just for them.
+            </div>
+          </div>
+        </div>
+
+        <!--
+        TAB: KOHNKE MOMENTS PHOTO GALLERY (added 9/10)
+        A grid of photo cards documenting John's zero-turn career.
+        To add a new photo: drop the file into images/, then copy
+        one <div class="gallery-item"> block below and update the src/alt
+        text + caption. That's it — the grid auto-arranges itself.
+      -->
+        <div id="gallery" class="tab-content">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                Kohnke Moments: A Photographic Retrospective
+              </div>
+            </div>
+            <div class="field-note">
+              <strong>Curator's Note:</strong> Every great operator needs an
+              origin story, a highlight reel, and at least one photo Cathy will
+              use as leverage later. Below is the official, lightly-exaggerated
+              visual archive of John Kohnke and his zero-turn — captured
+              mid-glory, mid-turn, and mid-"I meant to do that."
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="gallery-grid">
+              <div class="gallery-item">
+                <img
+                  src="images/johns-first-lap.png"
+                  alt="John Kohnke on his new Cub Cadet zero-turn"
+                />
+                <div class="gallery-caption">
+                  <strong>Exhibit A: The Maiden Voyage</strong>
+                  Price tag still swinging, confidence at an all-time high.
+                  Historians mark this as the exact moment the neighborhood lawn
+                  edges got nervous.
+                </div>
+              </div>
+              <div class="gallery-item">
+                <img
+                  src="images/john-focus.jpeg"
+                  alt="John Kohnke riding his Cub Cadet zero-turn mower"
+                />
+                <div class="gallery-caption">
+                  <strong>Exhibit B: Peak Focus</strong>
+                  Full concentration, textbook posture. Somewhere off-camera, a
+                  flower bed is quietly filing a restraining order.
+                </div>
+              </div>
+              <div class="gallery-item">
+                <img
+                  src="images/john-zero-turn-liftoff.png"
+                  alt="John Kohnke, heroic sunset zero-turn action shot"
+                />
+                <div class="gallery-caption">
+                  <strong>Exhibit C: The Legend Edit</strong>
+                  How John remembers it happening. Dramatic sunset, flying dirt
+                  clods, zero fear. Cathy remembers it as "Tuesday, 10 AM,
+                  mostly just loud."
+                </div>
+              </div>
+              <div class="gallery-item">
+                <img
+                  src="images/manual-cover.jpg"
+                  alt="Cover page of John Kohnke's Cub Cadet Owner's Guide, Kohnke Edition"
+                />
+                <div class="gallery-caption">
+                  <strong>Exhibit D: The Official Cover Art</strong>
+                  "Kohnke Edition — Custom Cub Cadet Ultima." For John, who
+                  mowed with whatever was available for years and finally bought
+                  himself a real machine.
+                </div>
+              </div>
+              <div class="gallery-item">
+                <img
+                  src="images/mandate-completion.jpg"
+                  alt="Cover page of Zero-Turn Academy and Cathy-Mandated Manual"
+                />
+                <div class="gallery-caption">
+                  <strong>Exhibit E: The Cathy Mandate (Cover)</strong>
+                  "Zero-Turn Academy & Cathy-Mandated Manual" — Special
+                  Edition: Old Dog Edition, Version 1.0. Commissioned after
+                  weeks of panic turns and epic lawn destruction.
+                </div>
+              </div>
+              <div class="gallery-item">
+                <img
+                  src="images/explosion-kohnke.jpg"
+                  alt="John Kohnke launched airborne off his Kohnke zero-turn"
+                />
+                <div class="gallery-caption">
+                  <strong>Exhibit F: Liftoff Event</strong>
+                  Witnesses report John achieved "brief but meaningful flight"
+                  while the mower kept going without him. NTSB ruled it operator
+                  error. John rules it "a stylish dismount."
+                </div>
+              </div>
+              <div class="gallery-item">
+                <img
+                  src="images/explosion-kohnke-quote.jpg"
+                  alt="Motivational poster of John Kohnke's zero-turn liftoff, with quote from Gary Chamblin"
+                />
+                <div class="gallery-caption">
+                  <strong>Exhibit G: The Motivational Poster</strong>
+                  "Who mows with grit, patience, pride, and a bomb-proof sense
+                  of humor? John Kohnke, that's who." — Gary Chamblin, framing
+                  this incident as inspirational.
+                </div>
+              </div>
+              <div class="gallery-item">
+                <img
+                  src="images/home-rupture.jpg"
+                  alt="John Kohnke driving his Kohnke zero-turn through a torn-up yard"
+                />
+                <div class="gallery-caption">
+                  <strong>Exhibit H: The Home Rupture Incident</strong>
+                  Yard status: reclassified as "active construction zone."
+                  John's mood: unbothered.
+                </div>
+              </div>
+              <div class="gallery-item">
+                <img
+                  src="images/mower-mud.jpeg"
+                  alt="John Kohnke covered in mud on his Kohnke zero-turn"
+                />
+                <div class="gallery-caption">
+                  <strong>Exhibit I: The Mud Bath</strong>
+                  Started as a mowing job. Ended as a spa day, minus the
+                  relaxing part.
+                </div>
+              </div>
+              <div class="gallery-item">
+                <!-- Swapped the old checklist screenshot for a generated
+                   "Certificate of Success" graphic (images/success-certificate.svg).
+                   It's an SVG, so it's just a text file — open it in any
+                   editor to tweak the wording, colors, or layout. -->
+                <img
+                  src="images/success-certificate.svg"
+                  alt="Certificate of Success from the Cathy-Mandated Zero-Turn Improvement Program"
+                />
+                <div class="gallery-caption">
+                  <strong>Exhibit J: The Success Report</strong>
+                  Grass relocation reduced by "at least 40%." Emergency apology
+                  delivery speed "considerably improved." Official verdict from
+                  Cathy: "He's still an old dog... but the academy actually taught him
+                  a few new tricks."
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--
+        TAB 10: ROOKIE DISCLAIMERS (added 9/9)
+        Merged in from the 9/7 Desktop draft copy of this manual — this whole tab
+        was missing from this version. It's the joke "legal disclaimer" section.
+        If you want to add/remove a joke disclaimer, just copy one of the
+        <li class="disclaimer-item"> blocks below and edit the text.
+      -->
+        <div id="disclaimers" class="tab-content">
+          <div class="card">
+            <div
+              class="notice-container"
+              style="
+                margin-top: 8px;
+                padding: 20px;
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                background: rgba(245, 184, 0, 0.08);
+              "
+            >
+              <div
+                class="disclaimer-title"
+                style="
+                  font-size: 1rem;
+                  font-weight: 700;
+                  color: var(--brand-yellow);
+                  margin-bottom: 12px;
+                "
+              >
+                Official Notice
+              </div>
+
+              <p style="color: var(--text-secondary); margin-bottom: 20px">
+                This dynamic portal is a custom-built reference system developed
+                exclusively for
+                <strong>John Kohnke</strong>. This project was fully coded,
+                designed, and built independently by
+                <strong>Gary Chamblin</strong>, with the
+                <strong
+                  >profound hope that you eventually figure out how to drive a
+                  zero-turn without tearing up local infrastructure</strong
+                >
+                in mind.
+                <span style="color: var(--brand-yellow); font-weight: 700"
+                  >Cub Cadet</span
+                >
+                is not affiliated with, endorsing, or responsible for this
+                application.
+              </p>
+
+              <div
+                class="disclaimer-title"
+                style="
+                  font-size: 1rem;
+                  font-weight: 700;
+                  color: var(--brand-yellow);
+                  margin-bottom: 12px;
+                "
+              >
+                🚜 Zero-Turn Rookie Disclaimers
+              </div>
+
+              <ul
+                style="
+                  list-style: none;
+                  padding-left: 0;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 14px;
+                  color: var(--text-secondary);
+                "
+              >
+                <li>
+                  <strong style="color: var(--brand-yellow)"
+                    >The Lap Bar Panic:</strong
+                  >
+                  This system is easier to navigate than dual steering levers.
+                  It will not cause you to accidentally reverse at 7 MPH into
+                  your own chain-link fence because you panicked.
+                </li>
+                <li>
+                  <strong style="color: var(--brand-yellow)"
+                    >The Involuntary Donut:</strong
+                  >
+                  We accept zero liability for users trapped in a continuous,
+                  high-speed spin cycle in the center of the yard because they
+                  forgot how physics works.
+                </li>
+                <li>
+                  <strong style="color: var(--brand-yellow)"
+                    >The Etch-A-Sketch Lawn:</strong
+                  >
+                  This portal ensures clean data, but it cannot fix a lawn that
+                  looks like a drunken maze. We guarantee accurate part numbers,
+                  not straight lines.
+                </li>
+                <li>
+                  <strong style="color: var(--brand-yellow)"
+                    >The Sunday Crack-of-Dawn Patrol:</strong
+                  >
+                  Not responsible for flying coffee mugs from neighbors when you
+                  fire up a twin-cylinder engine at dawn just to show off your
+                  pivot turns.
+                </li>
+                <li>
+                  <strong style="color: var(--brand-yellow)"
+                    >The Maintenance Blindspot:</strong
+                  >
+                  This database won't force you to check the oil. If you spend
+                  45 minutes yanking a starter rope on a fouled spark plug, that
+                  is between you and your pride.
+                </li>
+                <li>
+                  <strong style="color: var(--brand-yellow)"
+                    >The Tailgate Launch:</strong
+                  >
+                  We assume you understand the mathematical necessity of ramps.
+                  We are exempt from damages if you try to "gun it" over a
+                  trailer tailgate and high-center your brand-new cutting deck.
+                </li>
+                <li>
+                  <strong style="color: var(--brand-yellow)"
+                    >The Drainage Ditch Extrication Act:</strong
+                  >
+                  This application contains zero coding to salvage your dignity
+                  when you misjudge a slope and slide gracefully backward into a
+                  muddy retention ditch, requiring a tactical rescue mission
+                  from the neighbor you actively ignore.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Disclaimer Banner -->
+          <div class="disclaimer">
+            OFFICIAL NOTICE: This dynamic portal is a custom-built reference
+            system for John Kohnke. Cub Cadet is not affiliated with or
+            responsible for this application.
+          </div>
+
+          <!--
+          AUTHOR / CREDIT BLOCK (added 9/10)
+          Moved inside this last tab (Rookie Disclaimers) on purpose so it
+          only shows here, not on every single tab. Swap the src on
+          .author-photo below for a different headshot anytime — just drop
+          the new image into images/ and update the path.
+        -->
+          <div class="author-block">
+            <img
+              src="images/author-gary.jpeg"
+              alt="Gary Chamblin"
+              class="author-photo"
+            />
+            <div>
+              <div class="author-name">Gary Chamblin</div>
+              <div class="author-role">Author · Coder · Designer</div>
+              <div class="author-tagline">
+                Built this whole command hub by hand for John — history, jokes,
+                and all.
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Back to Top button — sits fixed in the bottom-right corner of every
+       tab. Hidden/shown and made to scroll via the JS at the bottom of the
+       page (search for "Back to Top" in the <script> block). -->
+    <button
+      id="backToTopBtn"
+      onclick="
+        document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' })
+      "
+      title="Back to top"
+      aria-label="Back to top"
+    >
+      ↑
+    </button>
+
+    <script>
+      // Mobile Navigation Toggle with Zero-Turn Donut Spin & Grass Blast
+      function toggleMobileNav() {
+        if (window.innerWidth > 900) return;
+
+        const sidebar = document.querySelector("aside");
+        const btn = document.getElementById("navToggleBtn");
+        const isOpening = !sidebar.classList.contains("mobile-open");
+
+        sidebar.classList.toggle("mobile-open");
+
+        if (btn && window.innerWidth <= 900) {
+          btn.classList.remove("spinning-donut");
+          // Trigger reflow to restart animation reliably on repeated clicks
+          void btn.offsetWidth;
+          btn.classList.add("spinning-donut");
+
+          setTimeout(() => {
+            btn.classList.remove("spinning-donut");
+          }, 750);
+        }
+      }
+
+      // Dynamic Tab Router
+      function switchTab(tabId, navItem) {
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((tab) => tab.classList.remove("active"));
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((item) => item.classList.remove("active"));
+
+        document.getElementById(tabId).classList.add("active");
+        navItem.classList.add("active");
+
+        // Close mobile nav after selecting a tab on small screens
+        document.querySelector("aside").classList.remove("mobile-open");
+
+        // The content area (<main>) scrolls independently from the sidebar.
+        // Every time you click a new tab, snap its scroll position back to
+        // the top so you land on the start of the page instead of wherever
+        // the previous tab happened to be scrolled to.
+        document.querySelector("main").scrollTop = 0;
+      }
+
+      // Diagnostic Matrix Logic
+      function runDiagnostic() {
+        const val = document.getElementById("diagSelect").value;
+        const res = document.getElementById("diagResult");
+
+        const solutions = {
+          start:
+            "<strong>Check Sequence:</strong> Check seat switch, brake pedal, battery voltage, fuel level.",
+          cut: "<strong>Check Sequence:</strong> Check tire pressures first, then level deck and inspect blades.",
+          vibrate:
+            "<strong>DANGER: STOP IMMEDIATELY!</strong> Replace bent blades or bad spindles.",
+          pull: "<strong>Check Sequence:</strong> Equalize rear tire pressures to 10-12 PSI.",
+          overheat:
+            "<strong>Check Sequence:</strong> Blow out engine fins & hydro fan with compressed air.",
+          smoke:
+            "<strong>Check Sequence:</strong> Correct oil level. Load-test battery (FL heat slays batteries in 2 yrs).",
+        };
+
+        if (val && solutions[val]) {
+          res.innerHTML = solutions[val];
+          res.style.display = "block";
+        } else {
+          res.style.display = "none";
+        }
+      }
+
+      // Task Reset Tool
+      function resetCheckboxes() {
+        document
+          .querySelectorAll(".task-check")
+          .forEach((cb) => (cb.checked = false));
+      }
+
+      // Back to Top button — show it once you've scrolled down a bit, hide it
+      // near the top. Listens on <main> (the content area) since that's what
+      // actually scrolls now, not the whole window. Change the "150" below to
+      // adjust how far you have to scroll before it appears.
+      document.querySelector("main").addEventListener("scroll", function () {
+        const btn = document.getElementById("backToTopBtn");
+        if (this.scrollTop > 150) {
+          btn.classList.add("show");
+        } else {
+          btn.classList.remove("show");
+        }
+      });
+
+      // Automatically reset/close mobile dropdown menu when resizing back to desktop full screen
+      window.addEventListener("resize", function () {
+        if (window.innerWidth > 900) {
+          const sidebar = document.querySelector("aside");
+          if (sidebar) {
+            sidebar.classList.remove("mobile-open");
+          }
+        }
+      });
+
+      // Header Cruising Mower Collision & Real-time Lawn Cutting Effect
+      function initHeaderMowerCollision() {
+        const mower = document.querySelector(".header-cruising-mower");
+        const header = document.querySelector("header");
+        const tallGrass = document.querySelector(".tall-grass-layer");
+        const mowedStrip = document.querySelector(".mowed-strip");
+        const titleEl = document.getElementById("brandTitle");
+        const subtitleEl = document.getElementById("brandSubtitle");
+        const ownerChip = document.querySelector(".owner-chip");
+
+        if (!mower || !titleEl) return;
+
+        function launchClippingBurst() {
+          const discharge = document.getElementById("grass-discharge");
+          const source = discharge?.getBoundingClientRect() ?? mower.getBoundingClientRect();
+          const originX = source.left + source.width * 0.2;
+          const originY = source.top + source.height * 0.72;
+          const burst = document.createElement("div");
+          const palette = ["#48d84f", "#83f05c", "#c1ff64", "#259d37", "#a6ef3f"];
+          burst.className = "clipping-impact-burst";
+          burst.setAttribute("aria-hidden", "true");
+
+          for (let i = 0; i < 34; i++) {
+            const clipping = document.createElement("span");
+            const destinationX = Math.random() * window.innerWidth;
+            const destinationY = Math.random() * window.innerHeight;
+            const angle = Math.random() * 920 - 360;
+            const midScale = 3.5 + Math.random() * 5.5;
+
+            clipping.className = "impact-clipping";
+            clipping.style.backgroundColor =
+              palette[Math.floor(Math.random() * palette.length)];
+            clipping.style.setProperty("--origin-x", `${originX}px`);
+            clipping.style.setProperty("--origin-y", `${originY}px`);
+            clipping.style.setProperty("--travel-x", `${destinationX - originX}px`);
+            clipping.style.setProperty("--travel-y", `${destinationY - originY}px`);
+            clipping.style.setProperty("--blade-width", `${8 + Math.random() * 15}px`);
+            clipping.style.setProperty("--blade-height", `${4 + Math.random() * 8}px`);
+            clipping.style.setProperty("--flight-time", `${0.65 + Math.random() * 0.45}s`);
+            clipping.style.setProperty("--flight-delay", `${Math.random() * 0.12}s`);
+            clipping.style.setProperty("--start-angle", `${angle}deg`);
+            clipping.style.setProperty("--mid-angle", `${angle + 350}deg`);
+            clipping.style.setProperty("--end-angle", `${angle + 640}deg`);
+            clipping.style.setProperty("--mid-scale", midScale.toFixed(2));
+            clipping.style.setProperty("--end-scale", `${midScale * 2.8}`);
+            burst.appendChild(clipping);
+          }
+
+          document.body.appendChild(burst);
+          window.setTimeout(() => burst.remove(), 1500);
+        }
+
+        function runMowerClickEffect() {
+          launchClippingBurst();
+          if (!mower.classList.contains("zero-turning")) {
+            mower.classList.add("zero-turning");
+            window.setTimeout(() => {
+              mower.classList.remove("zero-turning");
+            }, 900);
+          }
+        }
+
+        document.addEventListener(
+          "click",
+          (event) => {
+            if (window.innerWidth <= 900) return;
+
+            const mowerBounds = mower.getBoundingClientRect();
+            const clickIsOverMower =
+              event.clientX >= mowerBounds.left &&
+              event.clientX <= mowerBounds.right &&
+              event.clientY >= mowerBounds.top &&
+              event.clientY <= mowerBounds.bottom;
+
+            if (!clickIsOverMower) return;
+
+            event.preventDefault();
+            event.stopPropagation();
+            runMowerClickEffect();
+          },
+          true,
+        );
+
+        function splitToChars(el) {
+          if (!el || el.dataset.splitDone) return;
+          el.dataset.splitDone = "true";
+          const text = el.innerText.trim();
+          el.innerHTML = "";
+          for (let i = 0; i < text.length; i++) {
+            if (text[i] === " ") {
+              const space = document.createElement("span");
+              space.className = "tumble-space";
+              space.innerHTML = "&nbsp;";
+              el.appendChild(space);
+            } else {
+              const span = document.createElement("span");
+              span.textContent = text[i];
+              span.className = "tumble-char";
+              el.appendChild(span);
+            }
+          }
+        }
+
+        splitToChars(titleEl);
+        if (subtitleEl) splitToChars(subtitleEl);
+
+        let letters = Array.from(document.querySelectorAll(".tumble-char"));
+
+        window.addEventListener("resize", () => {
+          letters = Array.from(document.querySelectorAll(".tumble-char"));
+        });
+
+        let prevMowerLeft = null;
+        let currentDirection = "right"; // 'right' | 'left'
+        let currentPassId = 1;
+
+        function checkCollisionLoop() {
+          if (window.innerWidth > 900) {
+            const mowerRect = mower.getBoundingClientRect();
+            const headerRect = header ? header.getBoundingClientRect() : null;
+
+            // Detect direction changes when mower turns around at the ends
+            if (prevMowerLeft !== null) {
+              const deltaX = mowerRect.left - prevMowerLeft;
+              if (deltaX > 0.4 && currentDirection !== "right") {
+                currentDirection = "right";
+                currentPassId++;
+              } else if (deltaX < -0.4 && currentDirection !== "left") {
+                currentDirection = "left";
+                currentPassId++;
+              }
+            }
+            prevMowerLeft = mowerRect.left;
+
+            // 1. Real-time Grass Cutting & Shortening (Works smoothly in both directions)
+            if (headerRect && headerRect.width > 0 && tallGrass && mowedStrip) {
+              const deckCutX =
+                mowerRect.left + mowerRect.width * 0.5 - headerRect.left;
+              const cutPercent = Math.max(
+                0,
+                Math.min(100, (deckCutX / headerRect.width) * 100),
+              );
+
+              if (currentDirection === "right") {
+                // Moving Left -> Right: tall grass in front (cutPercent to 100%), mowed lawn behind (0 to cutPercent)
+                const tallClip = `polygon(${cutPercent}% 0%, 100% 0%, 100% 100%, ${cutPercent}% 100%)`;
+                tallGrass.style.clipPath = tallClip;
+                tallGrass.style.webkitClipPath = tallClip;
+
+                const mowedClip = `polygon(0% 0%, ${cutPercent}% 0%, ${cutPercent}% 100%, 0% 100%)`;
+                mowedStrip.style.clipPath = mowedClip;
+                mowedStrip.style.webkitClipPath = mowedClip;
+              } else {
+                // Moving Right -> Left: tall grass in front (0 to cutPercent), mowed lawn behind (cutPercent to 100%)
+                const tallClip = `polygon(0% 0%, ${cutPercent}% 0%, ${cutPercent}% 100%, 0% 100%)`;
+                tallGrass.style.clipPath = tallClip;
+                tallGrass.style.webkitClipPath = tallClip;
+
+                const mowedClip = `polygon(${cutPercent}% 0%, 100% 0%, 100% 100%, ${cutPercent}% 100%)`;
+                mowedStrip.style.clipPath = mowedClip;
+                mowedStrip.style.webkitClipPath = mowedClip;
+              }
+            }
+
+            // 2. Letter Tumbling Collision
+            if (
+              mowerRect.width > 0 &&
+              mowerRect.right > 0 &&
+              mowerRect.left < window.innerWidth
+            ) {
+              const cutLeft = mowerRect.left + 15;
+              const cutRight = mowerRect.right - 15;
+
+              for (let i = 0; i < letters.length; i++) {
+                const letter = letters[i];
+                if (letter.dataset.tumbledPass === String(currentPassId))
+                  continue;
+
+                const lRect = letter.getBoundingClientRect();
+                const overlapsVertically =
+                  mowerRect.bottom >= lRect.top &&
+                  mowerRect.top <= lRect.bottom;
+                if (
+                  lRect.width > 0 &&
+                  lRect.right >= cutLeft &&
+                  lRect.left <= cutRight &&
+                  overlapsVertically
+                ) {
+                  letter.dataset.tumbledPass = String(currentPassId);
+                  letter.classList.add("tumbled");
+                  setTimeout(() => {
+                    letter.classList.remove("tumbled");
+                  }, 1200);
+                }
+              }
+            }
+
+            // 3. Operator Badge Jumping Out of the Way (Both directions)
+            if (ownerChip && !ownerChip.classList.contains("jumping")) {
+              const oRect = ownerChip.getBoundingClientRect();
+              if (oRect.width > 0) {
+                const isColliding =
+                  currentDirection === "right"
+                    ? mowerRect.right >= oRect.left - 75 &&
+                      mowerRect.left <= oRect.right + 25
+                    : mowerRect.left <= oRect.right + 75 &&
+                      mowerRect.right >= oRect.left - 25;
+
+                if (isColliding) {
+                  ownerChip.classList.add("jumping");
+                  setTimeout(() => {
+                    ownerChip.classList.remove("jumping");
+                  }, 1150);
+                }
+              }
+            }
+          }
+          requestAnimationFrame(checkCollisionLoop);
+        }
+
+        requestAnimationFrame(checkCollisionLoop);
+      }
+
+      // Run collision monitor on DOM ready
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initHeaderMowerCollision);
+      } else {
+        initHeaderMowerCollision();
+      }
+    </script>
+  </body>
+</html>

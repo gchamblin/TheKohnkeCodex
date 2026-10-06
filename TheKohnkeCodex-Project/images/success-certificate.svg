@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" font-family="Georgia, 'Times New Roman', serif">
+  <!-- Certificate background -->
+  <rect x="0" y="0" width="800" height="600" fill="#151821"/>
+  <rect x="18" y="18" width="764" height="564" fill="none" stroke="#F5B800" stroke-width="4"/>
+  <rect x="30" y="30" width="740" height="540" fill="none" stroke="#F5B800" stroke-width="1.5"/>
+
+  <!-- Corner flourishes -->
+  <circle cx="40" cy="40" r="6" fill="#F5B800"/>
+  <circle cx="760" cy="40" r="6" fill="#F5B800"/>
+  <circle cx="40" cy="560" r="6" fill="#F5B800"/>
+  <circle cx="760" cy="560" r="6" fill="#F5B800"/>
+
+  <!-- Header ribbon (constrained with textLength so long letter-spaced
+       text can't run past the inner border) -->
+  <text x="400" y="95" text-anchor="middle" fill="#9D9FA9" font-size="16" letter-spacing="3" textLength="660" lengthAdjust="spacingAndGlyphs">CATHY-MANDATED ZERO-TURN IMPROVEMENT PROGRAM</text>
+
+  <!-- Big medal/seal -->
+  <circle cx="400" cy="160" r="46" fill="#F5B800"/>
+  <circle cx="400" cy="160" r="46" fill="none" stroke="#151821" stroke-width="3" stroke-dasharray="4 5"/>
+  <text x="400" y="152" text-anchor="middle" fill="#151821" font-size="26" font-weight="bold">★</text>
+  <text x="400" y="178" text-anchor="middle" fill="#151821" font-size="13" font-weight="bold">CERTIFIED</text>
+  <!-- Ribbon tails under the seal -->
+  <polygon points="382,204 382,250 400,236 418,250 418,204" fill="#d49f00"/>
+
+  <!-- Title (font-size reduced + textLength added so it can never overflow
+       past the inner border, no matter what font the browser substitutes) -->
+  <text x="400" y="290" text-anchor="middle" fill="#F2F4F8" font-size="34" font-weight="bold" textLength="620" lengthAdjust="spacingAndGlyphs">Certificate of Success</text>
+  <text x="400" y="322" text-anchor="middle" fill="#9D9FA9" font-size="16" font-style="italic">This certifies that the program has concluded with results</text>
+
+  <!-- Recipient -->
+  <text x="400" y="372" text-anchor="middle" fill="#F5B800" font-size="30" font-weight="bold" font-family="'Brush Script MT', cursive, Georgia, serif">John Kohnke</text>
+  <line x1="250" y1="386" x2="550" y2="386" stroke="#2D313E" stroke-width="1.5"/>
+
+  <!-- Result lines -->
+  <text x="400" y="422" text-anchor="middle" fill="#F2F4F8" font-size="17">Grass relocation reduced by at least 40%</text>
+  <text x="400" y="450" text-anchor="middle" fill="#F2F4F8" font-size="17">Emergency apology delivery speed: considerably improved</text>
+
+  <!-- Footer / signature line -->
+  <line x1="120" y1="510" x2="320" y2="510" stroke="#626575" stroke-width="1"/>
+  <text x="220" y="530" text-anchor="middle" fill="#626575" font-size="13">Cathy, Program Director</text>
+
+  <line x1="480" y1="510" x2="680" y2="510" stroke="#626575" stroke-width="1"/>
+  <text x="580" y="530" text-anchor="middle" fill="#626575" font-size="13">Gary, Chief Instructor</text>
+
+  <text x="400" y="565" text-anchor="middle" fill="#626575" font-size="12" font-style="italic">"He's still an old dog... but Gary actually taught him a few new tricks."</text>
+</svg>
